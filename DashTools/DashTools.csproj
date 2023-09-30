@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ProjectGuid>{D517B927-7AFC-42AD-A410-27354F3217C2}</ProjectGuid>
     <RootNamespace>Qoollo.MpegDash</RootNamespace>
     <AssemblyName>DashTools</AssemblyName>
