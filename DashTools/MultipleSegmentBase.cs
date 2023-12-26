@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace Qoollo.MpegDash
 {
@@ -8,7 +7,7 @@ namespace Qoollo.MpegDash
     /// </summary>
     public abstract class MultipleSegmentBase : SegmentBase
     {
-        internal MultipleSegmentBase(XElement node) 
+        internal MultipleSegmentBase(XElement node)
             : base(node)
         {
         }

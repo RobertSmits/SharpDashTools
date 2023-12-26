@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mime;
-
-namespace Qoollo.MpegDash
+﻿namespace Qoollo.MpegDash
 {
     public class Track
     {

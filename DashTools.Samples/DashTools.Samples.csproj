@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>$(TargetFrameworkVersion)</TargetFramework>
     <ProjectGuid>{19125071-F9C9-4F10-AA66-621DD65F3ABE}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Qoollo.MpegDash.Samples</RootNamespace>
@@ -14,7 +14,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="NReco.VideoConverter" Version="1.2.1" />
   </ItemGroup>

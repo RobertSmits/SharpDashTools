@@ -1,9 +1,5 @@
-﻿using Qoollo.MpegDash.Mpd;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
+using Qoollo.MpegDash.Mpd;
 
 namespace Qoollo.MpegDash
 {
@@ -43,8 +39,8 @@ namespace Qoollo.MpegDash
 
         /// <summary>
         /// 0...N
-        /// 
-        /// Specifies a base URL that can be used for reference resolution 
+        ///
+        /// Specifies a base URL that can be used for reference resolution
         /// and alternative URL selection
         /// </summary>
         public IEnumerable<BaseUrl> BaseUrls
@@ -52,7 +48,7 @@ namespace Qoollo.MpegDash
             get { return baseUrls.Value; }
         }
         private readonly Lazy<IEnumerable<BaseUrl>> baseUrls;
-        
+
         private IEnumerable<BaseUrl> ParseBaseUrls()
         {
             return node.Elements()
@@ -62,10 +58,10 @@ namespace Qoollo.MpegDash
 
         /// <summary>
         /// 0...1
-        /// 
-        /// Specifies default Segment Base information. 
-        /// 
-        /// Information in this element is overridden by information in 
+        ///
+        /// Specifies default Segment Base information.
+        ///
+        /// Information in this element is overridden by information in
         /// AdapationSet.SegmentBase and Representation.SegmentBase, if present.
         /// </summary>
         public SegmentBase SegmentBase
@@ -84,10 +80,10 @@ namespace Qoollo.MpegDash
 
         /// <summary>
         /// 0...1
-        /// 
+        ///
         /// Specifies default Segment List information.
-        /// 
-        /// Information in this element is overridden by information in 
+        ///
+        /// Information in this element is overridden by information in
         /// AdapationSet.SegmentList and Representation.SegmentList, if present.
         /// </summary>
         public MpdSegmentList SegmentList
@@ -106,10 +102,10 @@ namespace Qoollo.MpegDash
 
         /// <summary>
         /// 0...1
-        /// 
+        ///
         /// Specifies default Segment Template information.
-        ///  
-        /// Information in this element is overridden by information in 
+        ///
+        /// Information in this element is overridden by information in
         /// AdapationSet.SegmentTemplate and Representation.SegmentTemplate, if present.
         /// </summary>
         public MpdSegmentTemplate SegmentTemplate
@@ -128,8 +124,8 @@ namespace Qoollo.MpegDash
 
         /// <summary>
         /// 0...1
-        /// 
-        /// Specifies that this Period belongs to a certain asset. 
+        ///
+        /// Specifies that this Period belongs to a certain asset.
         /// </summary>
         public AssetIdentifier AssetIdentifier
         {

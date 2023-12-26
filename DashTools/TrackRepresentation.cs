@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Qoollo.MpegDash
 {
     public class TrackRepresentation
@@ -177,7 +173,7 @@ namespace Qoollo.MpegDash
                 }
             }
         }
-        
+
         internal IEnumerable<string> GetFragmentsPaths(TimeSpan from, TimeSpan to)
         {
             var span = TimeSpan.Zero;

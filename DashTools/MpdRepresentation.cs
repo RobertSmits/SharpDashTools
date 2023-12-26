@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace Qoollo.MpegDash
 {
@@ -18,7 +16,7 @@ namespace Qoollo.MpegDash
         {
             get { return node.Attribute("id").Value; }
         }
-        
+
         public uint Bandwidth
         {
             get { return helper.ParseUint("bandwidth"); }
@@ -28,7 +26,7 @@ namespace Qoollo.MpegDash
         {
             get { return helper.ParseOptionalUint("qualityRanking"); }
         }
-        
+
         public string DependencyId
         {
             get { return node.Attribute("dependencyId").Value; }

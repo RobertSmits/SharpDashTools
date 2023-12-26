@@ -1,11 +1,5 @@
-﻿using NReco.VideoConverter;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using NReco.VideoConverter;
 
 namespace Qoollo.MpegDash.Samples
 {
@@ -36,7 +30,7 @@ namespace Qoollo.MpegDash.Samples
             var from = TimeSpan.Zero;
             var to = TimeSpan.MaxValue;
             var stopwatch = Stopwatch.StartNew();
-            
+
             var downloader = new MpdDownloader(new Uri(mpdUrl), dir);
             var trackRepresentation = downloader.GetTracksFor(TrackContentType.Video).First().TrackRepresentations.OrderByDescending(r => r.Bandwidth).First();
             var prepareTime = stopwatch.Elapsed;

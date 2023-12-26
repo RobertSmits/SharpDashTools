@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Qoollo.MpegDash
+﻿namespace Qoollo.MpegDash
 {
     public class MpdWalker
     {
@@ -39,7 +34,7 @@ namespace Qoollo.MpegDash
         public IEnumerable<Uri> GetAllFragmentsUrls()
         {
             var res = new List<Uri>();
-            
+
             //mpd.Periods
             //    .SelectMany(p => p.AdaptationSets)
             //    .SelectMany(a => a.

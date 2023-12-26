@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Qoollo.MpegDash
 {
@@ -231,7 +225,7 @@ namespace Qoollo.MpegDash
             //string outputFile = Path.Combine(destinationDir, DateTime.Now.ToString("yyyyMMddHHmmss") + "_video.mp4");
             //using (var stream = File.OpenWrite(outputFile))
             //using (var writer = new BinaryWriter(stream))
-            //{                
+            //{
             //foreach (var f in files.Skip(1))
             //{
             //    var bytes = File.ReadAllBytes(f);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Xml.Linq;
 
 namespace Qoollo.MpegDash
@@ -10,7 +7,7 @@ namespace Qoollo.MpegDash
     {
         private readonly IEnumerable<SegmentTimelineItem> items;
 
-        public SegmentTimeline(XElement node) 
+        public SegmentTimeline(XElement node)
             : base(node)
         {
             items = ParseItems();

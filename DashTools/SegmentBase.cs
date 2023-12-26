@@ -4,7 +4,7 @@ namespace Qoollo.MpegDash
 {
     public class SegmentBase : MpdElement
     {
-        internal SegmentBase(XElement node) 
+        internal SegmentBase(XElement node)
             : base(node)
         {
         }

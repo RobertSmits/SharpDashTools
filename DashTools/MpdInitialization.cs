@@ -4,7 +4,7 @@ namespace Qoollo.MpegDash
 {
     public class MpdInitialization : MpdElement
     {
-        internal MpdInitialization(XElement node) 
+        internal MpdInitialization(XElement node)
             : base(node)
         {
         }

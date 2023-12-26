@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace Qoollo.MpegDash
 {
@@ -9,7 +7,7 @@ namespace Qoollo.MpegDash
     /// </summary>
     public class MpdSegmentTemplate : MultipleSegmentBase
     {
-        internal MpdSegmentTemplate(XElement node) 
+        internal MpdSegmentTemplate(XElement node)
             : base(node)
         {
             segmentTimeline = ParseSegmentTimeline();
@@ -17,7 +15,7 @@ namespace Qoollo.MpegDash
 
         /// <summary>
         /// Optional
-        /// 
+        ///
         /// Specifies the template to create the Media Segment List.
         /// </summary>
         public string Media
@@ -27,9 +25,9 @@ namespace Qoollo.MpegDash
 
         /// <summary>
         /// Optional
-        /// 
-        /// Specifies the template to create the Index Segment List. 
-        /// If neither the $Number$ nor the $Time$ identifier is included, 
+        ///
+        /// Specifies the template to create the Index Segment List.
+        /// If neither the $Number$ nor the $Time$ identifier is included,
         /// this provides the URL to a Representation Index.
         /// </summary>
         public string Index
@@ -39,8 +37,8 @@ namespace Qoollo.MpegDash
 
         /// <summary>
         /// Optional
-        /// 
-        /// Specifies the template to create the Initialization Segment. 
+        ///
+        /// Specifies the template to create the Initialization Segment.
         /// Neither $Number$ nor the $Time$ identifier shall be included.
         /// </summary>
         public string Initialization
@@ -50,8 +48,8 @@ namespace Qoollo.MpegDash
 
         /// <summary>
         /// Optional
-        /// 
-        /// Specifies the template to create the Bitstream Switching Segment. 
+        ///
+        /// Specifies the template to create the Bitstream Switching Segment.
         /// Neither $Number$ nor the $Time$ identifier shall be included.
         /// </summary>
         public bool BitstreamSwitching

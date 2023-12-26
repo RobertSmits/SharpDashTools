@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace Qoollo.MpegDash
 {
     public class MpdSegmentList : MpdElement
     {
-        internal MpdSegmentList(XElement node) 
+        internal MpdSegmentList(XElement node)
             : base(node)
         {
             initialization = new Lazy<MpdInitialization>(ParseInitialization);

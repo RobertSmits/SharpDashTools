@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Qoollo.MpegDash
+﻿namespace Qoollo.MpegDash
 {
     public class AspectRatio
     {

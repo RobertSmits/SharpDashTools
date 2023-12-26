@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Qoollo.MpegDash
+﻿namespace Qoollo.MpegDash
 {
     internal static class ArrayExtensions
     {
@@ -15,7 +10,7 @@ namespace Qoollo.MpegDash
         /// <param name="second"></param>
         /// <returns></returns>
         public static bool StartsWith<T>(this T[] first, T[] second)
-            where T: IComparable<T>
+            where T : IComparable<T>
         {
             bool res = true;
             for (int i = 0; i < second.Length && res; i++)
