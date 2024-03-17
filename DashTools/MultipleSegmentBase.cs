@@ -1,25 +1,24 @@
 ﻿using System.Xml.Linq;
 
-namespace Qoollo.MpegDash
+namespace Qoollo.MpegDash;
+
+/// <summary>
+/// Specifies multiple Segment base information.
+/// </summary>
+public abstract class MultipleSegmentBase : SegmentBase
 {
-    /// <summary>
-    /// Specifies multiple Segment base information.
-    /// </summary>
-    public abstract class MultipleSegmentBase : SegmentBase
+    internal MultipleSegmentBase(XElement node)
+        : base(node)
     {
-        internal MultipleSegmentBase(XElement node)
-            : base(node)
-        {
-        }
+    }
 
-        public uint? Duration
-        {
-            get { return helper.ParseOptionalUint("duration"); }
-        }
+    public uint? Duration
+    {
+        get { return helper.ParseOptionalUint("duration"); }
+    }
 
-        public uint? StartNumber
-        {
-            get { return helper.ParseOptionalUint("startNumber"); }
-        }
+    public uint? StartNumber
+    {
+        get { return helper.ParseOptionalUint("startNumber"); }
     }
 }

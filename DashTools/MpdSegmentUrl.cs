@@ -1,22 +1,21 @@
 ﻿using System.Xml.Linq;
 
-namespace Qoollo.MpegDash
+namespace Qoollo.MpegDash;
+
+public class MpdSegmentUrl : MpdElement
 {
-    public class MpdSegmentUrl : MpdElement
+    internal MpdSegmentUrl(XElement node)
+        : base(node)
     {
-        internal MpdSegmentUrl(XElement node)
-            : base(node)
-        {
-        }
+    }
 
-        public int Index
-        {
-            get { return int.Parse(node.Attribute("index").Value); }
-        }
+    public int Index
+    {
+        get { return int.Parse(node.Attribute("index").Value); }
+    }
 
-        public string Media
-        {
-            get { return node.Attribute("media")?.Value; }
-        }
+    public string Media
+    {
+        get { return node.Attribute("media")?.Value; }
     }
 }

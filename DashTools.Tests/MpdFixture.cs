@@ -1,20 +1,19 @@
-﻿namespace Qoollo.MpegDash.Tests
+﻿namespace Qoollo.MpegDash.Tests;
+
+public class MpdFixture : IDisposable
 {
-    public class MpdFixture : IDisposable
+    public MpdFixture()
     {
-        public MpdFixture()
-        {
-            Stream = File.OpenRead("envivio.mpd");
-            Mpd = new MediaPresentationDescription(Stream);
-        }
-
-        public void Dispose()
-        {
-            Stream.Dispose();
-        }
-
-        public Stream Stream { get; private set; }
-
-        public MediaPresentationDescription Mpd { get; private set; }
+        Stream = File.OpenRead("envivio.mpd");
+        Mpd = new MediaPresentationDescription(Stream);
     }
+
+    public void Dispose()
+    {
+        Stream.Dispose();
+    }
+
+    public Stream Stream { get; private set; }
+
+    public MediaPresentationDescription Mpd { get; private set; }
 }

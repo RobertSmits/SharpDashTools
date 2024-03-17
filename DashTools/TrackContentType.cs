@@ -1,9 +1,8 @@
-﻿namespace Qoollo.MpegDash
+﻿namespace Qoollo.MpegDash;
+
+public enum TrackContentType
 {
-    public enum TrackContentType
-    {
-        Video,
-        Audio,
-        Text
-    }
+    Video,
+    Audio,
+    Text
 }

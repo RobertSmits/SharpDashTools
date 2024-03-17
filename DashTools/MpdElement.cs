@@ -1,17 +1,16 @@
 ﻿using System.Xml.Linq;
 
-namespace Qoollo.MpegDash
+namespace Qoollo.MpegDash;
+
+public abstract class MpdElement
 {
-    public abstract class MpdElement
+    protected readonly XElement node;
+
+    protected readonly XmlAttributeParseHelper helper;
+
+    internal MpdElement(XElement node)
     {
-        protected readonly XElement node;
-
-        protected readonly XmlAttributeParseHelper helper;
-
-        internal MpdElement(XElement node)
-        {
-            this.node = node;
-            this.helper = new XmlAttributeParseHelper(node);
-        }
+        this.node = node;
+        this.helper = new XmlAttributeParseHelper(node);
     }
 }

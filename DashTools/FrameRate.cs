@@ -1,15 +1,14 @@
-﻿namespace Qoollo.MpegDash
+﻿namespace Qoollo.MpegDash;
+
+public class FrameRate
 {
-    public class FrameRate
+    public FrameRate(string value)
     {
-        public FrameRate(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentNullException(nameof(value));
+        if (string.IsNullOrWhiteSpace(value))
+            throw new ArgumentNullException(nameof(value));
 
-            RawValue = value;
-        }
-
-        public string RawValue { get; }
+        RawValue = value;
     }
+
+    public string RawValue { get; }
 }
