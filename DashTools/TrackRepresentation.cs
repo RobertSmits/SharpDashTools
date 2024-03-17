@@ -61,6 +61,8 @@ public class TrackRepresentation
 
                 foreach (var segment in segmentTemplate.SegmentTimeline)
                 {
+                    currentTime = segment.Time ?? currentTime;
+
                     for (ulong i = 0; i <= (uint)segment.RepeatCount; i++)
                     {
                         var segmentUrl = segmentTemplate.Media
