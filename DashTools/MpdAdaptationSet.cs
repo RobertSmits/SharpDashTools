@@ -7,6 +7,9 @@ public class MpdAdaptationSet : MpdElement
     internal MpdAdaptationSet(XElement node)
         : base(node)
     {
+        this.audioChannelConfiguration = new Lazy<MpdValue>(ParseAudioChannelConfiguration);
+        this.accessibility = new Lazy<MpdValue>(ParseAccessibility);
+        this.role = new Lazy<MpdValue>(ParseRole);
         this.segmentTemplate = new Lazy<MpdSegmentTemplate>(ParseSegmentTemplate);
         this.representations = new Lazy<IEnumerable<MpdRepresentation>>(ParseRepresentations);
     }
@@ -105,6 +108,24 @@ public class MpdAdaptationSet : MpdElement
         }
     }
 
+    public MpdValue? AudioChannelConfiguration
+    {
+        get { return audioChannelConfiguration.Value; }
+    }
+    private readonly Lazy<MpdValue?> audioChannelConfiguration;
+
+    public MpdValue? Accessibility
+    {
+        get { return accessibility.Value; }
+    }
+    private readonly Lazy<MpdValue?> accessibility;
+
+    public MpdValue? Role
+    {
+        get { return role.Value; }
+    }
+    private readonly Lazy<MpdValue?> role;
+
     /// <summary>
     /// Specifies default Segment Template information.
     ///
@@ -123,6 +144,30 @@ public class MpdAdaptationSet : MpdElement
         get { return representations.Value; }
     }
     private readonly Lazy<IEnumerable<MpdRepresentation>> representations;
+
+    private MpdValue? ParseAudioChannelConfiguration()
+    {
+        return node.Elements()
+            .Where(n => n.Name.LocalName == "AudioChannelConfiguration")
+            .Select(n => new MpdValue(n))
+            .FirstOrDefault();
+    }
+
+    private MpdValue? ParseAccessibility()
+    {
+        return node.Elements()
+            .Where(n => n.Name.LocalName == "Accessibility")
+            .Select(n => new MpdValue(n))
+            .FirstOrDefault();
+    }
+
+    private MpdValue? ParseRole()
+    {
+        return node.Elements()
+            .Where(n => n.Name.LocalName == "Role")
+            .Select(n => new MpdValue(n))
+            .FirstOrDefault();
+    }
 
     private MpdSegmentTemplate ParseSegmentTemplate()
     {
