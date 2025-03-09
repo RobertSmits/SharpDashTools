@@ -35,7 +35,7 @@ public class TrackRepresentation
     {
         string res;
 
-        var segmentTemplate = adaptationSet.SegmentTemplate ?? representation.SegmentTemplate;
+        var segmentTemplate = representation.SegmentTemplate ?? adaptationSet.SegmentTemplate;
         if (segmentTemplate != null)
             res = segmentTemplate.Initialization
                 .Replace("$RepresentationID$", representation.Id);
@@ -51,7 +51,7 @@ public class TrackRepresentation
 
     private IEnumerable<string> GetFragmentsPaths()
     {
-        var segmentTemplate = adaptationSet.SegmentTemplate ?? representation.SegmentTemplate;
+        var segmentTemplate = representation.SegmentTemplate ?? adaptationSet.SegmentTemplate;
         if (segmentTemplate != null)
         {
             if (segmentTemplate.SegmentTimeline != null)

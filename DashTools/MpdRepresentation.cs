@@ -8,8 +8,9 @@ public class MpdRepresentation : MpdElement
         : base(node)
     {
         segmentList = new Lazy<MpdSegmentList>(ParseSegmentList);
-        this.segmentTemplate = new Lazy<MpdSegmentTemplate>(ParseSegmentTemplate);
-        this.baseURL = new Lazy<string>(ParseBaseURL);
+        segmentTemplate = new Lazy<MpdSegmentTemplate>(ParseSegmentTemplate);
+        contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
+        baseURL = new Lazy<string>(ParseBaseURL);
     }
 
     public string Id
@@ -49,6 +50,12 @@ public class MpdRepresentation : MpdElement
     }
     private readonly Lazy<MpdSegmentTemplate> segmentTemplate;
 
+    public IEnumerable<MpdContentProtection> ContentProtections
+    {
+        get { return contentProtections.Value; }
+    }
+    private readonly Lazy<IEnumerable<MpdContentProtection>> contentProtections;
+
     public string BaseURL
     {
         get { return baseURL.Value; }
@@ -76,5 +83,12 @@ public class MpdRepresentation : MpdElement
             .Where(n => n.Name.LocalName == "BaseURL")
             .Select(n => n.Value)
             .FirstOrDefault();
+    }
+
+    private IEnumerable<MpdContentProtection> ParseContentProtections()
+    {
+        return node.Elements()
+            .Where(n => n.Name.LocalName == "ContentProtection")
+            .Select(n => new MpdContentProtection(n));
     }
 }
