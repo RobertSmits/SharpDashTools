@@ -12,6 +12,7 @@ public class MpdAdaptationSet : MpdElement
         role = new Lazy<MpdValue>(ParseRole);
         segmentTemplate = new Lazy<MpdSegmentTemplate>(ParseSegmentTemplate);
         representations = new Lazy<IEnumerable<MpdRepresentation>>(ParseRepresentations);
+        contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
     }
 
     public uint? Id
@@ -145,6 +146,12 @@ public class MpdAdaptationSet : MpdElement
     }
     private readonly Lazy<IEnumerable<MpdRepresentation>> representations;
 
+    public IEnumerable<MpdContentProtection> ContentProtections
+    {
+        get { return contentProtections.Value; }
+    }
+    private readonly Lazy<IEnumerable<MpdContentProtection>> contentProtections;
+
     private MpdValue? ParseAudioChannelConfiguration()
     {
         return node.Elements()
@@ -182,5 +189,12 @@ public class MpdAdaptationSet : MpdElement
         return node.Elements()
             .Where(n => n.Name.LocalName == "Representation")
             .Select(n => new MpdRepresentation(n));
+    }
+
+    private IEnumerable<MpdContentProtection> ParseContentProtections()
+    {
+        return node.Elements()
+            .Where(n => n.Name.LocalName == "ContentProtection")
+            .Select(n => new MpdContentProtection(n));
     }
 }
