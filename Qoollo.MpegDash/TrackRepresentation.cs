@@ -35,26 +35,30 @@ public class TrackRepresentation
 
     private string GetInitFragmentPath()
     {
-        string res;
-
         var segmentTemplate = representation.SegmentTemplate ?? adaptationSet.SegmentTemplate;
-        if (segmentTemplate != null)
-            res = segmentTemplate.Initialization
-                .Replace("$RepresentationID$", representation.Id);
-        else if (representation.SegmentList != null)
-            res = representation.SegmentList.Initialization.SourceUrl;
-        else if (representation.BaseURL != null)
-            res = representation.BaseURL;
-        else
-            throw new Exception("Failed to determine InitFragmentPath");
+        return segmentTemplate switch
+        {
+            // If SegmentTemplate has Initialization and Representation ID is available
+            _ when segmentTemplate?.Initialization is not null && representation.Id is not null =>
+                segmentTemplate.Initialization.Replace("$RepresentationID$", representation.Id),
 
-        return res;
+            // If SegmentList has Initialization and SourceUrl is available
+            _ when representation.SegmentList?.Initialization?.SourceUrl is not null =>
+                representation.SegmentList.Initialization.SourceUrl,
+
+            // If BaseURL is available
+            _ when representation.BaseURL is not null =>
+                representation.BaseURL,
+
+            // If nothing matches, throw an exception
+            _ => throw new Exception("Failed to determine InitFragmentPath")
+        };
     }
 
     private IEnumerable<string> GetFragmentsPaths()
     {
         var segmentTemplate = representation.SegmentTemplate ?? adaptationSet.SegmentTemplate;
-        if (segmentTemplate != null)
+        if (segmentTemplate?.Media is not null && representation.Id is not null)
         {
             if (segmentTemplate.SegmentTimeline != null)
             {
@@ -104,7 +108,7 @@ public class TrackRepresentation
     private IEnumerable<TrackRepresentationSegment> GetSegments()
     {
         var segmentTemplate = adaptationSet.SegmentTemplate ?? representation.SegmentTemplate;
-        if (segmentTemplate != null)
+        if (segmentTemplate?.Media is not null && representation.Id is not null)
         {
             var segments = GetSegmentsFromTimeline(segmentTemplate);
 
@@ -126,7 +130,7 @@ public class TrackRepresentation
             }
 
         }
-        else if (representation.SegmentList != null)
+        else if (representation.SegmentList is not null && representation.SegmentList.Duration.HasValue)
         {
             foreach (var segmentUrl in representation.SegmentList.SegmentUrls.OrderBy(s => s.Index))
             {
@@ -144,6 +148,9 @@ public class TrackRepresentation
 
     private IEnumerable<TrackRepresentationSegment> GetSegmentsFromRepresentation(MpdRepresentation representation)
     {
+        if (representation.SegmentTemplate?.Media is null || !representation.SegmentTemplate.Duration.HasValue)
+            yield break;
+
         int i = 1;
         while (true)
         {
@@ -160,6 +167,9 @@ public class TrackRepresentation
 
     private IEnumerable<TrackRepresentationSegment> GetSegmentsFromTimeline(MpdSegmentTemplate segmentTemplate)
     {
+        if (segmentTemplate.Media is null || segmentTemplate.SegmentTimeline is null || representation.Id is null)
+            yield break;
+
         int i = 1;
         foreach (var item in segmentTemplate.SegmentTimeline)
         {

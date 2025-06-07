@@ -7,10 +7,10 @@ public class MpdAdaptationSet : MpdElement
     internal MpdAdaptationSet(XElement node)
         : base(node)
     {
-        audioChannelConfiguration = new Lazy<MpdValue>(ParseAudioChannelConfiguration);
-        accessibility = new Lazy<MpdValue>(ParseAccessibility);
-        role = new Lazy<MpdValue>(ParseRole);
-        segmentTemplate = new Lazy<MpdSegmentTemplate>(ParseSegmentTemplate);
+        audioChannelConfiguration = new Lazy<MpdValue?>(ParseAudioChannelConfiguration);
+        accessibility = new Lazy<MpdValue?>(ParseAccessibility);
+        role = new Lazy<MpdValue?>(ParseRole);
+        segmentTemplate = new Lazy<MpdSegmentTemplate?>(ParseSegmentTemplate);
         representations = new Lazy<IEnumerable<MpdRepresentation>>(ParseRepresentations);
         contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
     }
@@ -25,12 +25,12 @@ public class MpdAdaptationSet : MpdElement
         get { return helper.ParseOptionalUint("group"); }
     }
 
-    public string Lang
+    public string? Lang
     {
         get { return node.Attribute("lang")?.Value; }
     }
 
-    public string ContentType
+    public string? ContentType
     {
         get
         {
@@ -39,7 +39,7 @@ public class MpdAdaptationSet : MpdElement
         }
     }
 
-    public AspectRatio Par
+    public AspectRatio? Par
     {
         get { return helper.ParseOptionalAspectRatio("par"); }
     }
@@ -74,12 +74,12 @@ public class MpdAdaptationSet : MpdElement
         get { return helper.ParseOptionalUint("maxHeight"); }
     }
 
-    public FrameRate MinFrameRate
+    public FrameRate? MinFrameRate
     {
         get { return helper.ParseOptionalFrameRate("minFrameRate"); }
     }
 
-    public FrameRate MaxFrameRate
+    public FrameRate? MaxFrameRate
     {
         get { return helper.ParseOptionalFrameRate("maxFrameRate"); }
     }
@@ -99,13 +99,13 @@ public class MpdAdaptationSet : MpdElement
         get { return helper.ParseOptionalBool("subsegmentAlignment", false); }
     }
 
-    public uint SubsegmentStartsWithSAP
+    public uint? SubsegmentStartsWithSAP
     {
         get
         {
             var value = helper.ParseOptionalUint("subsegmentStartsWithSAP", null)
                 ?? helper.ParseOptionalUint("startWithSAP", null);
-            return value.Value;
+            return value;
         }
     }
 
@@ -134,11 +134,11 @@ public class MpdAdaptationSet : MpdElement
     /// AdapationSet.SegmentTemplate and
     /// Representation.SegmentTemplate, if present.
     /// </summary>
-    public MpdSegmentTemplate SegmentTemplate
+    public MpdSegmentTemplate? SegmentTemplate
     {
         get { return segmentTemplate.Value; }
     }
-    private readonly Lazy<MpdSegmentTemplate> segmentTemplate;
+    private readonly Lazy<MpdSegmentTemplate?> segmentTemplate;
 
     public IEnumerable<MpdRepresentation> Representations
     {
@@ -176,7 +176,7 @@ public class MpdAdaptationSet : MpdElement
             .FirstOrDefault();
     }
 
-    private MpdSegmentTemplate ParseSegmentTemplate()
+    private MpdSegmentTemplate? ParseSegmentTemplate()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "SegmentTemplate")

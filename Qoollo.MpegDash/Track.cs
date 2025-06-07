@@ -13,7 +13,7 @@ public class Track
         trackRepresentations = new Lazy<IEnumerable<TrackRepresentation>>(GetTrackRepresentations);
     }
 
-    public string ContentType
+    public string? ContentType
     {
         get { return adaptationSet.ContentType; }
     }

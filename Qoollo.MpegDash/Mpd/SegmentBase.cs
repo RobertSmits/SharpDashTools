@@ -21,7 +21,7 @@ public class SegmentBase : MpdElement
 
     public string IndexRange
     {
-        get { return node.Attribute("indexRange")?.Value; }
+        get { return helper.ParseMandatoryString("indexRange"); }
     }
 
     public bool IndexRangeExact

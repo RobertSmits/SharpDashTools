@@ -11,21 +11,21 @@ public class MpdContentProtection : MpdElement
 
     public string SchemeIdUri
     {
-        get { return node.Attribute("schemeIdUri")?.Value; }
+        get { return helper.ParseMandatoryString("schemeIdUri"); }
     }
-    public string Value
+    public string? Value
     {
-        get { return node.Attribute("value")?.Value; }
+        get { return helper.ParseOptionalString("value"); }
     }
-    public string DefaultKID
+    public string? DefaultKID
     {
         get { return node.Attribute(XName.Get("default_KID", "urn:mpeg:cenc:2013"))?.Value; }
     }
-    public string Pssh
+    public string? Pssh
     {
         get { return node.Element(XName.Get("pssh", "urn:mpeg:cenc:2013"))?.Value; }
     }
-    public string Pro
+    public string? Pro
     {
         get { return node.Element(XName.Get("pro", "urn:mpeg:cenc:2013"))?.Value; }
     }

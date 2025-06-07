@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFrameworkVersion>net8.0</TargetFrameworkVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <ImplicitUsings>enable</ImplicitUsings>	  
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>nullable</WarningsAsErrors>
   </PropertyGroup>
 
 </Project>

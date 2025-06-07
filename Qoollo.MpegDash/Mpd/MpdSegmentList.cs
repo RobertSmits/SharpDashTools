@@ -7,7 +7,7 @@ public class MpdSegmentList : MpdElement
     internal MpdSegmentList(XElement node)
         : base(node)
     {
-        initialization = new Lazy<MpdInitialization>(ParseInitialization);
+        initialization = new Lazy<MpdInitialization?>(ParseInitialization);
         segmentUrls = new Lazy<IEnumerable<MpdSegmentUrl>>(ParseSegmentUrls);
     }
 
@@ -21,11 +21,11 @@ public class MpdSegmentList : MpdElement
         get { return helper.ParseOptionalUint("duration"); }
     }
 
-    public MpdInitialization Initialization
+    public MpdInitialization? Initialization
     {
         get { return initialization.Value; }
     }
-    private readonly Lazy<MpdInitialization> initialization;
+    private readonly Lazy<MpdInitialization?> initialization;
 
     public IEnumerable<MpdSegmentUrl> SegmentUrls
     {
@@ -33,7 +33,7 @@ public class MpdSegmentList : MpdElement
     }
     private readonly Lazy<IEnumerable<MpdSegmentUrl>> segmentUrls;
 
-    private MpdInitialization ParseInitialization()
+    private MpdInitialization? ParseInitialization()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "Initialization")

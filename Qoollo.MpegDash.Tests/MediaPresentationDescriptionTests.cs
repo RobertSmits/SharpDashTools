@@ -153,7 +153,7 @@ public class MediaPresentationDescriptionTests : IClassFixture<MpdFixture>
     [Fact]
     public void Period_AdaptationSets_0_Par()
     {
-        Assert.Equal("1:1", mpd.Periods.First().AdaptationSets.First().Par.RawValue);
+        Assert.Equal("1:1", mpd.Periods.First().AdaptationSets.First().Par?.RawValue);
     }
 
     [Fact]
@@ -201,7 +201,7 @@ public class MediaPresentationDescriptionTests : IClassFixture<MpdFixture>
     [Fact]
     public void Period_AdaptationSets_0_MaxFrameRate()
     {
-        Assert.Equal("30000/1001", mpd.Periods.First().AdaptationSets.First().MaxFrameRate.RawValue);
+        Assert.Equal("30000/1001", mpd.Periods.First().AdaptationSets.First().MaxFrameRate?.RawValue);
     }
 
     [Fact]

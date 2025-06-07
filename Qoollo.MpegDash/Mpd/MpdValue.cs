@@ -11,11 +11,11 @@ public class MpdValue : MpdElement
 
     public string SchemeIdUri
     {
-        get { return node.Attribute("schemeIdUri").Value; }
+        get { return helper.ParseMandatoryString("schemeIdUri"); }
     }
 
     public string Value
     {
-        get { return node.Attribute("value").Value; }
+        get { return helper.ParseMandatoryString("value"); }
     }
 }

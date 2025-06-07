@@ -7,15 +7,10 @@ namespace Qoollo.MpegDash;
 public class MpdDownloader : IDisposable
 {
     private readonly Uri mpdUrl;
-
     private readonly string destinationDir;
-
     private readonly Lazy<string> mpdFileName;
-
     private readonly Lazy<MediaPresentationDescription> mpd;
-
     private readonly Lazy<MpdWalker> walker;
-
     private readonly int downloadConcurrency;
 
     public MpdDownloader(Uri mpdUrl, string destinationDir, int downloadConcurrency = 2)
@@ -23,8 +18,8 @@ public class MpdDownloader : IDisposable
         if (downloadConcurrency < 1)
             throw new ArgumentException("downloadConcurrency cannot be less than 1.", "downloadConcurrency");
 
-        this.mpdUrl = mpdUrl;
-        this.destinationDir = destinationDir;
+        this.mpdUrl = mpdUrl ?? throw new ArgumentNullException(nameof(mpdUrl));
+        this.destinationDir = destinationDir ?? throw new ArgumentNullException(nameof(destinationDir));
         this.downloadConcurrency = downloadConcurrency;
 
         mpdFileName = new Lazy<string>(GetMpdFileName);
@@ -49,8 +44,11 @@ public class MpdDownloader : IDisposable
 
     public FileInfo CombineChunksFast(IEnumerable<Mp4File> chunks, Action<string> ffmpegRunner)
     {
-        string concatFile = Path.Combine(Path.GetDirectoryName(chunks.First().Path), string.Format("{0:yyyyMMddHHmmssfffffff}_concat.mp4", DateTime.Now));
-        string outFile = concatFile.Replace("_concat.mp4", "_video.mp4");
+        if (!chunks.Any()) throw new ArgumentException("Chunks must not be empty.", nameof(chunks));
+        var firstChunkPath = chunks.First().Path;
+        var dir = Path.GetDirectoryName(firstChunkPath) ?? string.Empty;
+        var concatFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmssfffffff}_concat.mp4", DateTime.Now));
+        var outFile = concatFile.Replace("_concat.mp4", "_video.mp4");
 
         if (File.Exists(concatFile))
             File.Delete(concatFile);
@@ -83,12 +81,16 @@ public class MpdDownloader : IDisposable
 
     public FileInfo CombineChunksFastOld(IEnumerable<Mp4File> chunks, Action<string> ffmpegRunner, int maxCmdLength = 32672)
     {
+        if (!chunks.Any()) throw new ArgumentException("Chunks must not be empty.", nameof(chunks));
+        var firstChunkPath = chunks.First().Path;
+        var dir = Path.GetDirectoryName(firstChunkPath) ?? string.Empty;
+        string outputFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmssfffffff}_combined.mp4", DateTime.Now));
+
         var cmdBuilder = new StringBuilder(maxCmdLength);
         var initFile = chunks.OfType<Mp4InitFile>().First();
         var files = chunks.Except(new[] { initFile }).ToList();
 
         cmdBuilder.AppendFormat("-i \"concat:{0}", ConvertPathForFfmpeg(initFile.Path));
-        string outputFile = Path.Combine(Path.GetDirectoryName(chunks.First().Path), string.Format("{0:yyyyMMddHHmmssfffffff}_combined.mp4", DateTime.Now));
         if (File.Exists(outputFile))
             File.Delete(outputFile);
         string cmdEnd = "\" -c copy " + ConvertPathForFfmpeg(outputFile);
@@ -124,9 +126,13 @@ public class MpdDownloader : IDisposable
 
     public FileInfo CombineChunks(IEnumerable<Mp4File> chunks, Action<string> ffmpegRunner)
     {
+        if (!chunks.Any()) throw new ArgumentException("Chunks must not be empty.", nameof(chunks));
+        var firstChunkPath = chunks.First().Path;
+        var dir = Path.GetDirectoryName(firstChunkPath) ?? string.Empty;
+
         chunks = ProcessChunks(chunks);
 
-        string tempFile = Path.Combine(Path.GetDirectoryName(chunks.First().Path), string.Format("{0:yyyyMMddHHmmss}_temp.mp4", DateTime.Now));
+        string tempFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmss}_temp.mp4", DateTime.Now));
         foreach (var c in chunks)
         {
             ffmpegRunner(string.Format(
@@ -138,9 +144,9 @@ public class MpdDownloader : IDisposable
         }
         File.Delete(tempFile);
 
-        string filesListFile = Path.Combine(Path.GetDirectoryName(chunks.First().Path), string.Format("{0:yyyyMMddHHmmss}_list.txt", DateTime.Now));
+        string filesListFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmss}_list.txt", DateTime.Now));
         File.WriteAllText(filesListFile, string.Join("", chunks.Select(c => string.Format("file '{0}'\r\n", Path.GetFileName(c.Path)))));
-        string outFile = Path.Combine(Path.GetDirectoryName(chunks.First().Path), string.Format("{0:yyyyMMddHHmmss}_combined.mp4", DateTime.Now));
+        string outFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmss}_combined.mp4", DateTime.Now));
         if (File.Exists(outFile))
             File.Delete(outFile);
         ffmpegRunner(string.Format(
@@ -286,7 +292,7 @@ public class MpdDownloader : IDisposable
 
         return Task.Factory.ContinueWhenAll(
             tasks.ToArray(),
-            completed => CombineFragments(mpd.Value, mpdFileName.Value, Path.Combine(Path.GetDirectoryName(mpdFileName.Value), "video.mp4")));
+            completed => CombineFragments(mpd.Value, mpdFileName.Value, Path.Combine(Path.GetDirectoryName(mpdFileName.Value) ?? string.Empty, "video.mp4")));
     }
 
     private Task DownloadAllFragments(MpdAdaptationSet adaptationSet, MpdRepresentation representation)
@@ -300,15 +306,16 @@ public class MpdDownloader : IDisposable
         var track = walker.GetTracksFor(TrackContentType.Video).First();
         var trackRepresentation = track.TrackRepresentations.OrderByDescending(r => r.Bandwidth).First();
 
+        var dir = Path.GetDirectoryName(mpdFilePath) ?? string.Empty;
         using (var stream = File.OpenWrite(outputFilePath))
         using (var writer = new BinaryWriter(stream))
         {
-            string fragmentPath = Path.Combine(Path.GetDirectoryName(mpdFilePath), trackRepresentation.InitFragmentPath);
+            string fragmentPath = Path.Combine(dir, trackRepresentation.InitFragmentPath);
             writer.Write(File.ReadAllBytes(fragmentPath));
 
             foreach (var path in trackRepresentation.FragmentsPaths)
             {
-                fragmentPath = Path.Combine(Path.GetDirectoryName(mpdFilePath), path);
+                fragmentPath = Path.Combine(dir, path);
                 if (!File.Exists(fragmentPath))
                     break;
                 writer.Write(File.ReadAllBytes(fragmentPath));
@@ -336,6 +343,9 @@ public class MpdDownloader : IDisposable
 
     private Task<string> DownloadRepresentationInitFragment(MpdAdaptationSet adaptationSet, MpdRepresentation representation)
     {
+        if (adaptationSet.SegmentTemplate?.Initialization is null || representation.Id is null)
+            throw new InvalidOperationException("SegmentTemplate.Initialization or Representation.Id is null");
+
         string initUrl = adaptationSet.SegmentTemplate.Initialization
             .Replace("$RepresentationID$", representation.Id);
         var task = DownloadFragment(initUrl);
@@ -346,6 +356,9 @@ public class MpdDownloader : IDisposable
 
     private Task<string> DownloadRepresentationFragment(MpdAdaptationSet adaptationSet, MpdRepresentation representation, int index)
     {
+        if (adaptationSet.SegmentTemplate?.Media is null || representation.Id is null)
+            throw new InvalidOperationException("SegmentTemplate.Media or Representation.Id is null");
+
         string fragmentUrl = adaptationSet.SegmentTemplate.Media
                     .Replace("$RepresentationID$", representation.Id)
                     .Replace("$Number$", index.ToString());
@@ -372,11 +385,11 @@ public class MpdDownloader : IDisposable
             while (File.Exists(destPath))
             {
                 i++;
-                destPath = Path.Combine(Path.GetDirectoryName(destPath), Path.ChangeExtension((Path.GetFileNameWithoutExtension(destPath) + "_" + i), Path.GetExtension(destPath)));
+                destPath = Path.Combine(Path.GetDirectoryName(destPath)!, Path.ChangeExtension((Path.GetFileNameWithoutExtension(destPath) + "_" + i), Path.GetExtension(destPath)));
             }
 
             // create directory recursive
-            Directory.CreateDirectory(Path.GetDirectoryName(destPath));
+            Directory.CreateDirectory(Path.GetDirectoryName(destPath)!);
 
             return Task.Factory.StartNew(() =>
             {
@@ -451,8 +464,7 @@ public class MpdDownloader : IDisposable
 
     private bool IsAbsoluteUrl(string url)
     {
-        Uri result;
-        return Uri.TryCreate(url, UriKind.Absolute, out result);
+        return Uri.TryCreate(url, UriKind.Absolute, out var result);
     }
 
     public void Dispose()

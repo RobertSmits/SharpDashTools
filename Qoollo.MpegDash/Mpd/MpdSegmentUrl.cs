@@ -11,11 +11,11 @@ public class MpdSegmentUrl : MpdElement
 
     public int Index
     {
-        get { return int.Parse(node.Attribute("index").Value); }
+        get { return helper.ParseMandatoryInt("index"); }
     }
 
     public string Media
     {
-        get { return node.Attribute("media")?.Value; }
+        get { return helper.ParseMandatoryString("media"); }
     }
 }

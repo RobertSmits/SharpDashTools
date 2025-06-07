@@ -30,7 +30,7 @@ public class MpdWalker
         }
 
         return mpd.Periods
-            .SelectMany(p => p.AdaptationSets.Where(a => a.ContentType.Contains(typeText)).Select(a => new Track(a)));
+            .SelectMany(p => p.AdaptationSets.Where(a => a.ContentType?.Contains(typeText) == true).Select(a => new Track(a)));
     }
 
     public IEnumerable<Uri> GetAllFragmentsUrls()
@@ -192,11 +192,11 @@ public class MpdWalker
         return res;
     }
 
-    class Period
+    private class Period
     {
         public const string DEFAULT_ID = "defaultId";
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         public TimeSpan? Start { get; set; }
 

@@ -11,6 +11,6 @@ public class MpdInitialization : MpdElement
 
     public string SourceUrl
     {
-        get { return node.Attribute("sourceURL")?.Value; }
+        get { return helper.ParseMandatoryString("sourceURL"); }
     }
 }

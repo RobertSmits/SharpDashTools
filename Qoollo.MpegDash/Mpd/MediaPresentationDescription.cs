@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace Qoollo.MpegDash.Mpd;
@@ -17,13 +16,11 @@ public class MediaPresentationDescription : IDisposable
     public MediaPresentationDescription(Stream mpdStream)
         : this(mpdStream, false)
     {
-        baseURL = new Lazy<string>(ParseBaseURL);
     }
 
     public MediaPresentationDescription(string mpdFilePath)
         : this(File.OpenRead(mpdFilePath), true)
     {
-        baseURL = new Lazy<string>(ParseBaseURL);
     }
 
     private MediaPresentationDescription(Stream mpdStream, bool streamIsOwned)
@@ -31,6 +28,7 @@ public class MediaPresentationDescription : IDisposable
         stream = mpdStream;
         this.streamIsOwned = streamIsOwned;
 
+        baseURL = new Lazy<string?>(ParseBaseURL);
         mpdTag = new Lazy<XElement>(ReadMpdTag);
         fetchTime = new Lazy<DateTimeOffset>(() => { var v = mpdTag.Value; return DateTimeOffset.Now; });
         helper = new Lazy<XmlAttributeParseHelper>(() => new XmlAttributeParseHelper(mpdTag.Value));
@@ -54,7 +52,7 @@ public class MediaPresentationDescription : IDisposable
     }
     private readonly Lazy<DateTimeOffset> fetchTime;
 
-    public string Id
+    public string? Id
     {
         get { return mpdTag.Value.Attribute("id")?.Value; }
     }
@@ -64,9 +62,9 @@ public class MediaPresentationDescription : IDisposable
         get { return mpdTag.Value.Attribute("type")?.Value ?? "static"; }
     }
 
-    public string Profiles
+    public string? Profiles
     {
-        get { return mpdTag.Value.Attribute("profiles").Value; }
+        get { return helper.Value.ParseOptionalString("profiles"); }
     }
 
     public DateTimeOffset? AvailabilityStartTime
@@ -96,7 +94,7 @@ public class MediaPresentationDescription : IDisposable
 
     public TimeSpan MinBufferTime
     {
-        get { return XmlConvert.ToTimeSpan(mpdTag.Value.Attribute("minBufferTime").Value); }
+        get { return helper.Value.ParseMandatoryTimeSpan("minBufferTime"); }
     }
 
     public TimeSpan? TimeShiftBufferDepth
@@ -119,13 +117,13 @@ public class MediaPresentationDescription : IDisposable
         get { return helper.Value.ParseOptionalTimeSpan("maxSubsegmentDuration"); }
     }
 
-    public string BaseURL
+    public string? BaseURL
     {
         get { return baseURL.Value; }
     }
-    private readonly Lazy<string> baseURL;
+    private readonly Lazy<string?> baseURL;
 
-    private string ParseBaseURL()
+    private string? ParseBaseURL()
     {
         return mpdTag.Value.Elements()
             .Where(n => n.Name.LocalName == "BaseURL")
@@ -151,7 +149,7 @@ public class MediaPresentationDescription : IDisposable
     private XElement ReadMpdTag()
     {
         var doc = XDocument.Load(stream);
-        return doc.Root;
+        return doc.Root ?? throw new Exception();
 
         //using (var reader = XmlReader.Create(stream))
         //{

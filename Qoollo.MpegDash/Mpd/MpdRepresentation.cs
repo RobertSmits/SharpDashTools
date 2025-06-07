@@ -7,20 +7,20 @@ public class MpdRepresentation : MpdElement
     internal MpdRepresentation(XElement node)
         : base(node)
     {
-        segmentList = new Lazy<MpdSegmentList>(ParseSegmentList);
-        segmentTemplate = new Lazy<MpdSegmentTemplate>(ParseSegmentTemplate);
+        segmentList = new Lazy<MpdSegmentList?>(ParseSegmentList);
+        segmentTemplate = new Lazy<MpdSegmentTemplate?>(ParseSegmentTemplate);
         contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
-        baseURL = new Lazy<string>(ParseBaseURL);
+        baseURL = new Lazy<string?>(ParseBaseURL);
     }
 
-    public string Id
+    public string? Id
     {
-        get { return node.Attribute("id").Value; }
+        get { return helper.ParseOptionalString("id"); }
     }
 
     public uint Bandwidth
     {
-        get { return helper.ParseUint("bandwidth"); }
+        get { return helper.ParseMandatoryUint("bandwidth"); }
     }
 
     public uint? QualityRanking
@@ -28,27 +28,27 @@ public class MpdRepresentation : MpdElement
         get { return helper.ParseOptionalUint("qualityRanking"); }
     }
 
-    public string DependencyId
+    public string? DependencyId
     {
-        get { return node.Attribute("dependencyId").Value; }
+        get { return helper.ParseOptionalString("dependencyId"); }
     }
 
-    public string MediaStreamStructureId
+    public string? MediaStreamStructureId
     {
-        get { return node.Attribute("mediaStreamStructureId").Value; }
+        get { return helper.ParseOptionalString("mediaStreamStructureId"); }
     }
 
-    public MpdSegmentList SegmentList
+    public MpdSegmentList? SegmentList
     {
         get { return segmentList.Value; }
     }
-    private readonly Lazy<MpdSegmentList> segmentList;
+    private readonly Lazy<MpdSegmentList?> segmentList;
 
-    public MpdSegmentTemplate SegmentTemplate
+    public MpdSegmentTemplate? SegmentTemplate
     {
         get { return segmentTemplate.Value; }
     }
-    private readonly Lazy<MpdSegmentTemplate> segmentTemplate;
+    private readonly Lazy<MpdSegmentTemplate?> segmentTemplate;
 
     public IEnumerable<MpdContentProtection> ContentProtections
     {
@@ -56,13 +56,13 @@ public class MpdRepresentation : MpdElement
     }
     private readonly Lazy<IEnumerable<MpdContentProtection>> contentProtections;
 
-    public string BaseURL
+    public string? BaseURL
     {
         get { return baseURL.Value; }
     }
-    private readonly Lazy<string> baseURL;
+    private readonly Lazy<string?> baseURL;
 
-    private MpdSegmentList ParseSegmentList()
+    private MpdSegmentList? ParseSegmentList()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "SegmentList")
@@ -70,14 +70,14 @@ public class MpdRepresentation : MpdElement
             .FirstOrDefault();
     }
 
-    private MpdSegmentTemplate ParseSegmentTemplate()
+    private MpdSegmentTemplate? ParseSegmentTemplate()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "SegmentTemplate")
             .Select(n => new MpdSegmentTemplate(n))
             .FirstOrDefault();
     }
-    private string ParseBaseURL()
+    private string? ParseBaseURL()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "BaseURL")

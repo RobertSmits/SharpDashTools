@@ -8,17 +8,17 @@ public class MpdPeriod : MpdElement
         : base(node)
     {
         baseUrls = new Lazy<IEnumerable<BaseUrl>>(ParseBaseUrls);
-        segmentBase = new Lazy<SegmentBase>(ParseSegmentBase);
-        segmentList = new Lazy<MpdSegmentList>(ParseSegmentList);
-        segmentTemplate = new Lazy<MpdSegmentTemplate>(ParseSegmentTemplate);
-        assetIdentifier = new Lazy<AssetIdentifier>(ParseAssetIdentifier);
+        segmentBase = new Lazy<SegmentBase?>(ParseSegmentBase);
+        segmentList = new Lazy<MpdSegmentList?>(ParseSegmentList);
+        segmentTemplate = new Lazy<MpdSegmentTemplate?>(ParseSegmentTemplate);
+        assetIdentifier = new Lazy<AssetIdentifier?>(ParseAssetIdentifier);
         adaptationSets = new Lazy<IEnumerable<MpdAdaptationSet>>(ParseAdaptationSets);
 
     }
 
-    public string Id
+    public string? Id
     {
-        get { return node.Attribute("id")?.Value; }
+        get { return helper.ParseOptionalString("id"); }
     }
 
     public TimeSpan? Start
@@ -63,13 +63,13 @@ public class MpdPeriod : MpdElement
     /// Information in this element is overridden by information in
     /// AdapationSet.SegmentBase and Representation.SegmentBase, if present.
     /// </summary>
-    public SegmentBase SegmentBase
+    public SegmentBase? SegmentBase
     {
         get { return segmentBase.Value; }
     }
-    private readonly Lazy<SegmentBase> segmentBase;
+    private readonly Lazy<SegmentBase?> segmentBase;
 
-    private SegmentBase ParseSegmentBase()
+    private SegmentBase? ParseSegmentBase()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "SegmentBase")
@@ -85,13 +85,13 @@ public class MpdPeriod : MpdElement
     /// Information in this element is overridden by information in
     /// AdapationSet.SegmentList and Representation.SegmentList, if present.
     /// </summary>
-    public MpdSegmentList SegmentList
+    public MpdSegmentList? SegmentList
     {
         get { return segmentList.Value; }
     }
-    private readonly Lazy<MpdSegmentList> segmentList;
+    private readonly Lazy<MpdSegmentList?> segmentList;
 
-    private MpdSegmentList ParseSegmentList()
+    private MpdSegmentList? ParseSegmentList()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "SegmentList")
@@ -107,13 +107,13 @@ public class MpdPeriod : MpdElement
     /// Information in this element is overridden by information in
     /// AdapationSet.SegmentTemplate and Representation.SegmentTemplate, if present.
     /// </summary>
-    public MpdSegmentTemplate SegmentTemplate
+    public MpdSegmentTemplate? SegmentTemplate
     {
         get { return segmentTemplate.Value; }
     }
-    private readonly Lazy<MpdSegmentTemplate> segmentTemplate;
+    private readonly Lazy<MpdSegmentTemplate?> segmentTemplate;
 
-    private MpdSegmentTemplate ParseSegmentTemplate()
+    private MpdSegmentTemplate? ParseSegmentTemplate()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "SegmentTemplate")
@@ -126,13 +126,13 @@ public class MpdPeriod : MpdElement
     ///
     /// Specifies that this Period belongs to a certain asset.
     /// </summary>
-    public AssetIdentifier AssetIdentifier
+    public AssetIdentifier? AssetIdentifier
     {
         get { return assetIdentifier.Value; }
     }
-    private readonly Lazy<AssetIdentifier> assetIdentifier;
+    private readonly Lazy<AssetIdentifier?> assetIdentifier;
 
-    private AssetIdentifier ParseAssetIdentifier()
+    private AssetIdentifier? ParseAssetIdentifier()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "AssetIdentifier")

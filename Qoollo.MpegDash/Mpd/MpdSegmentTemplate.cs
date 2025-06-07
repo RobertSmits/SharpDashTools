@@ -18,9 +18,9 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     ///
     /// Specifies the template to create the Media Segment List.
     /// </summary>
-    public string Media
+    public string? Media
     {
-        get { return node.Attribute("media")?.Value; }
+        get { return helper.ParseOptionalString("media"); }
     }
 
     /// <summary>
@@ -30,9 +30,9 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     /// If neither the $Number$ nor the $Time$ identifier is included,
     /// this provides the URL to a Representation Index.
     /// </summary>
-    public string Index
+    public string? Index
     {
-        get { return node.Attribute("index")?.Value; }
+        get { return helper.ParseOptionalString("index"); }
     }
 
     /// <summary>
@@ -41,9 +41,9 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     /// Specifies the template to create the Initialization Segment.
     /// Neither $Number$ nor the $Time$ identifier shall be included.
     /// </summary>
-    public string Initialization
+    public string? Initialization
     {
-        get { return node.Attribute("initialization")?.Value; }
+        get { return helper.ParseOptionalString("initialization"); }
     }
 
     /// <summary>
@@ -57,13 +57,13 @@ public class MpdSegmentTemplate : MultipleSegmentBase
         get { return helper.ParseOptionalBool("bitstreamSwitching", false); }
     }
 
-    public SegmentTimeline SegmentTimeline
+    public SegmentTimeline? SegmentTimeline
     {
         get { return segmentTimeline; }
     }
-    private readonly SegmentTimeline segmentTimeline;
+    private readonly SegmentTimeline? segmentTimeline;
 
-    private SegmentTimeline ParseSegmentTimeline()
+    private SegmentTimeline? ParseSegmentTimeline()
     {
         return node.Elements()
             .Where(n => n.Name.LocalName == "SegmentTimeline")

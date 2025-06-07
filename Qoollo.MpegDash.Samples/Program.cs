@@ -86,16 +86,17 @@ class Program
         var walker = new MpdWalker(mpd);
         var track = walker.GetTracksFor(TrackContentType.Video).First();
         var trackRepresentation = track.TrackRepresentations.OrderByDescending(r => r.Bandwidth).First();
+        var dir = Path.GetDirectoryName(mpdFilePath) ?? string.Empty;
 
         using (var stream = File.OpenWrite(outputFile))
         using (var writer = new BinaryWriter(stream))
         {
-            string fragmentPath = Path.Combine(Path.GetDirectoryName(mpdFilePath), trackRepresentation.InitFragmentPath);
+            string fragmentPath = Path.Combine(dir, trackRepresentation.InitFragmentPath);
             writer.Write(File.ReadAllBytes(fragmentPath));
 
             foreach (var path in trackRepresentation.FragmentsPaths)
             {
-                fragmentPath = Path.Combine(Path.GetDirectoryName(mpdFilePath), path);
+                fragmentPath = Path.Combine(dir, path);
                 if (!File.Exists(fragmentPath))
                     break;
                 writer.Write(File.ReadAllBytes(fragmentPath));

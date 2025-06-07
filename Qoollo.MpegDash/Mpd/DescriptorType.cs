@@ -33,7 +33,7 @@ public class DescriptorType : MpdElement
     /// space and semantics must be defined by the owners of the
     /// scheme identified in the @schemeIdUri attribute.
     /// </summary>
-    public string Value
+    public string? Value
     {
         get { return helper.ParseOptionalString("value"); }
     }
@@ -46,7 +46,7 @@ public class DescriptorType : MpdElement
     /// the processing of one of the descriptors with an identical
     /// value is sufficient.
     /// </summary>
-    public string Id
+    public string? Id
     {
         get { return helper.ParseOptionalString("id"); }
     }
