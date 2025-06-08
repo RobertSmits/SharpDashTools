@@ -6,12 +6,12 @@ namespace Qoollo.MpegDash.Mpd;
 public class MediaPresentationDescription : IDisposable
 {
     private readonly Stream stream;
-
     private readonly bool streamIsOwned;
-
     private readonly Lazy<XElement> mpdTag;
-
     private readonly Lazy<XmlAttributeParseHelper> helper;
+    private readonly Lazy<DateTimeOffset> fetchTime;
+    private readonly Lazy<string?> baseURL;
+    private readonly Lazy<IEnumerable<MpdPeriod>> periods;
 
     public MediaPresentationDescription(Stream mpdStream)
         : this(mpdStream, false)
@@ -46,82 +46,35 @@ public class MediaPresentationDescription : IDisposable
         }
     }
 
-    public DateTimeOffset FetchTime
-    {
-        get { return fetchTime.Value; }
-    }
-    private readonly Lazy<DateTimeOffset> fetchTime;
+    public DateTimeOffset FetchTime => fetchTime.Value;
 
-    public string? Id
-    {
-        get { return mpdTag.Value.Attribute("id")?.Value; }
-    }
+    public string? Id => mpdTag.Value.Attribute("id")?.Value;
 
-    public string Type
-    {
-        get { return mpdTag.Value.Attribute("type")?.Value ?? "static"; }
-    }
+    public string Type => mpdTag.Value.Attribute("type")?.Value ?? "static";
 
-    public string? Profiles
-    {
-        get { return helper.Value.ParseOptionalString("profiles"); }
-    }
+    public string? Profiles => helper.Value.ParseOptionalString("profiles");
 
-    public DateTimeOffset? AvailabilityStartTime
-    {
-        get { return helper.Value.ParseDateTimeOffset("availabilityStartTime", Type == "dynamic"); }
-    }
+    public DateTimeOffset? AvailabilityStartTime => helper.Value.ParseDateTimeOffset("availabilityStartTime", Type == "dynamic");
 
-    public DateTimeOffset? PublishTime
-    {
-        get { return helper.Value.ParseOptionalDateTimeOffset("publishTime"); }
-    }
+    public DateTimeOffset? PublishTime => helper.Value.ParseOptionalDateTimeOffset("publishTime");
 
-    public DateTimeOffset? AvailabilityEndTime
-    {
-        get { return helper.Value.ParseOptionalDateTimeOffset("availabilityEndTime"); }
-    }
+    public DateTimeOffset? AvailabilityEndTime => helper.Value.ParseOptionalDateTimeOffset("availabilityEndTime");
 
-    public TimeSpan? MediaPresentationDuration
-    {
-        get { return helper.Value.ParseOptionalTimeSpan("mediaPresentationDuration"); }
-    }
+    public TimeSpan? MediaPresentationDuration => helper.Value.ParseOptionalTimeSpan("mediaPresentationDuration");
 
-    public TimeSpan? MinimumUpdatePeriod
-    {
-        get { return helper.Value.ParseOptionalTimeSpan("minimumUpdatePeriod"); }
-    }
+    public TimeSpan? MinimumUpdatePeriod => helper.Value.ParseOptionalTimeSpan("minimumUpdatePeriod");
 
-    public TimeSpan MinBufferTime
-    {
-        get { return helper.Value.ParseMandatoryTimeSpan("minBufferTime"); }
-    }
+    public TimeSpan MinBufferTime => helper.Value.ParseMandatoryTimeSpan("minBufferTime");
 
-    public TimeSpan? TimeShiftBufferDepth
-    {
-        get { return helper.Value.ParseOptionalTimeSpan("timeShiftBufferDepth"); }
-    }
+    public TimeSpan? TimeShiftBufferDepth => helper.Value.ParseOptionalTimeSpan("timeShiftBufferDepth");
 
-    public TimeSpan? SuggestedPresentationDelay
-    {
-        get { return helper.Value.ParseOptionalTimeSpan("suggestedPresentationDelay"); }
-    }
+    public TimeSpan? SuggestedPresentationDelay => helper.Value.ParseOptionalTimeSpan("suggestedPresentationDelay");
 
-    public TimeSpan? MaxSegmentDuration
-    {
-        get { return helper.Value.ParseOptionalTimeSpan("maxSegmentDuration"); }
-    }
+    public TimeSpan? MaxSegmentDuration => helper.Value.ParseOptionalTimeSpan("maxSegmentDuration");
 
-    public TimeSpan? MaxSubsegmentDuration
-    {
-        get { return helper.Value.ParseOptionalTimeSpan("maxSubsegmentDuration"); }
-    }
+    public TimeSpan? MaxSubsegmentDuration => helper.Value.ParseOptionalTimeSpan("maxSubsegmentDuration");
 
-    public string? BaseURL
-    {
-        get { return baseURL.Value; }
-    }
-    private readonly Lazy<string?> baseURL;
+    public string? BaseURL => baseURL.Value;
 
     private string? ParseBaseURL()
     {
@@ -131,11 +84,7 @@ public class MediaPresentationDescription : IDisposable
             .FirstOrDefault();
     }
 
-    public IEnumerable<MpdPeriod> Periods
-    {
-        get { return periods.Value; }
-    }
-    private readonly Lazy<IEnumerable<MpdPeriod>> periods;
+    public IEnumerable<MpdPeriod> Periods => periods.Value;
 
     public void Save(string filename)
     {

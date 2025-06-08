@@ -1,9 +1,12 @@
-﻿using System.Xml.Linq;
+using System.Xml.Linq;
 
 namespace Qoollo.MpegDash.Mpd;
 
 public class MpdSegmentList : MpdElement
 {
+    private readonly Lazy<MpdInitialization?> initialization;
+    private readonly Lazy<IEnumerable<MpdSegmentUrl>> segmentUrls;
+
     internal MpdSegmentList(XElement node)
         : base(node)
     {
@@ -11,27 +14,13 @@ public class MpdSegmentList : MpdElement
         segmentUrls = new Lazy<IEnumerable<MpdSegmentUrl>>(ParseSegmentUrls);
     }
 
-    public uint? Timescale
-    {
-        get { return helper.ParseOptionalUint("timescale"); }
-    }
+    public uint? Timescale => helper.ParseOptionalUint("timescale");
 
-    public uint? Duration
-    {
-        get { return helper.ParseOptionalUint("duration"); }
-    }
+    public uint? Duration => helper.ParseOptionalUint("duration");
 
-    public MpdInitialization? Initialization
-    {
-        get { return initialization.Value; }
-    }
-    private readonly Lazy<MpdInitialization?> initialization;
+    public MpdInitialization? Initialization => initialization.Value;
 
-    public IEnumerable<MpdSegmentUrl> SegmentUrls
-    {
-        get { return segmentUrls.Value; }
-    }
-    private readonly Lazy<IEnumerable<MpdSegmentUrl>> segmentUrls;
+    public IEnumerable<MpdSegmentUrl> SegmentUrls => segmentUrls.Value;
 
     private MpdInitialization? ParseInitialization()
     {

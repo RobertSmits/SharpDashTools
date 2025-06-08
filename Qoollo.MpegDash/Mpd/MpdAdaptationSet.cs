@@ -1,9 +1,16 @@
-﻿using System.Xml.Linq;
+using System.Xml.Linq;
 
 namespace Qoollo.MpegDash.Mpd;
 
 public class MpdAdaptationSet : MpdElement
 {
+    private readonly Lazy<MpdValue?> audioChannelConfiguration;
+    private readonly Lazy<MpdValue?> accessibility;
+    private readonly Lazy<MpdValue?> role;
+    private readonly Lazy<MpdSegmentTemplate?> segmentTemplate;
+    private readonly Lazy<IEnumerable<MpdRepresentation>> representations;
+    private readonly Lazy<IEnumerable<MpdContentProtection>> contentProtections;
+
     internal MpdAdaptationSet(XElement node)
         : base(node)
     {
@@ -15,117 +22,45 @@ public class MpdAdaptationSet : MpdElement
         contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
     }
 
-    public uint? Id
-    {
-        get { return helper.ParseOptionalUint("id"); }
-    }
+    public uint? Id => helper.ParseOptionalUint("id");
 
-    public uint? Group
-    {
-        get { return helper.ParseOptionalUint("group"); }
-    }
+    public uint? Group => helper.ParseOptionalUint("group");
 
-    public string? Lang
-    {
-        get { return node.Attribute("lang")?.Value; }
-    }
+    public string? Lang => node.Attribute("lang")?.Value;
 
-    public string? ContentType
-    {
-        get
-        {
-            var attr = node.Attribute("contentType") ?? node.Attribute("mimeType");
-            return attr?.Value;
-        }
-    }
+    public string? ContentType => helper.ParseOptionalString("contentType") ?? helper.ParseOptionalString("mimeType");
 
-    public AspectRatio? Par
-    {
-        get { return helper.ParseOptionalAspectRatio("par"); }
-    }
+    public AspectRatio? Par => helper.ParseOptionalAspectRatio("par");
 
-    public uint? MinBandwidth
-    {
-        get { return helper.ParseOptionalUint("minBandwidth"); }
-    }
+    public uint? MinBandwidth => helper.ParseOptionalUint("minBandwidth");
 
-    public uint? MaxBandwidth
-    {
-        get { return helper.ParseOptionalUint("maxBandwidth"); }
-    }
+    public uint? MaxBandwidth => helper.ParseOptionalUint("maxBandwidth");
 
-    public uint? MinWidth
-    {
-        get { return helper.ParseOptionalUint("minWidth"); }
-    }
+    public uint? MinWidth => helper.ParseOptionalUint("minWidth");
 
-    public uint? MaxWidth
-    {
-        get { return helper.ParseOptionalUint("maxWidth"); }
-    }
+    public uint? MaxWidth => helper.ParseOptionalUint("maxWidth");
 
-    public uint? MinHeight
-    {
-        get { return helper.ParseOptionalUint("minHeight"); }
-    }
+    public uint? MinHeight => helper.ParseOptionalUint("minHeight");
 
-    public uint? MaxHeight
-    {
-        get { return helper.ParseOptionalUint("maxHeight"); }
-    }
+    public uint? MaxHeight => helper.ParseOptionalUint("maxHeight");
 
-    public FrameRate? MinFrameRate
-    {
-        get { return helper.ParseOptionalFrameRate("minFrameRate"); }
-    }
+    public FrameRate? MinFrameRate => helper.ParseOptionalFrameRate("minFrameRate");
 
-    public FrameRate? MaxFrameRate
-    {
-        get { return helper.ParseOptionalFrameRate("maxFrameRate"); }
-    }
+    public FrameRate? MaxFrameRate => helper.ParseOptionalFrameRate("maxFrameRate");
 
-    public bool SegmentAlignment
-    {
-        get { return helper.ParseOptionalBool("segmentAlignment", false); }
-    }
+    public bool SegmentAlignment => helper.ParseOptionalBool("segmentAlignment", false);
 
-    public bool BitstreamSwitching
-    {
-        get { return helper.ParseOptionalBool("bitstreamSwitching", false); }
-    }
+    public bool BitstreamSwitching => helper.ParseOptionalBool("bitstreamSwitching", false);
 
-    public bool SubsegmentAlignment
-    {
-        get { return helper.ParseOptionalBool("subsegmentAlignment", false); }
-    }
+    public bool SubsegmentAlignment => helper.ParseOptionalBool("subsegmentAlignment", false);
 
-    public uint? SubsegmentStartsWithSAP
-    {
-        get
-        {
-            var value = helper.ParseOptionalUint("subsegmentStartsWithSAP", null)
-                ?? helper.ParseOptionalUint("startWithSAP", null);
-            return value;
-        }
-    }
+    public uint? SubsegmentStartsWithSAP => helper.ParseOptionalUint("subsegmentStartsWithSAP") ?? helper.ParseOptionalUint("startWithSAP");
 
-    public MpdValue? AudioChannelConfiguration
-    {
-        get { return audioChannelConfiguration.Value; }
-    }
-    private readonly Lazy<MpdValue?> audioChannelConfiguration;
+    public MpdValue? AudioChannelConfiguration => audioChannelConfiguration.Value;
 
-    public MpdValue? Accessibility
-    {
-        get { return accessibility.Value; }
-    }
-    private readonly Lazy<MpdValue?> accessibility;
+    public MpdValue? Accessibility => accessibility.Value;
 
-    public MpdValue? Role
-    {
-        get { return role.Value; }
-    }
-    private readonly Lazy<MpdValue?> role;
+    public MpdValue? Role => role.Value;
 
     /// <summary>
     /// Specifies default Segment Template information.
@@ -134,23 +69,11 @@ public class MpdAdaptationSet : MpdElement
     /// AdapationSet.SegmentTemplate and
     /// Representation.SegmentTemplate, if present.
     /// </summary>
-    public MpdSegmentTemplate? SegmentTemplate
-    {
-        get { return segmentTemplate.Value; }
-    }
-    private readonly Lazy<MpdSegmentTemplate?> segmentTemplate;
+    public MpdSegmentTemplate? SegmentTemplate => segmentTemplate.Value;
 
-    public IEnumerable<MpdRepresentation> Representations
-    {
-        get { return representations.Value; }
-    }
-    private readonly Lazy<IEnumerable<MpdRepresentation>> representations;
+    public IEnumerable<MpdRepresentation> Representations => representations.Value;
 
-    public IEnumerable<MpdContentProtection> ContentProtections
-    {
-        get { return contentProtections.Value; }
-    }
-    private readonly Lazy<IEnumerable<MpdContentProtection>> contentProtections;
+    public IEnumerable<MpdContentProtection> ContentProtections => contentProtections.Value;
 
     private MpdValue? ParseAudioChannelConfiguration()
     {

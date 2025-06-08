@@ -1,9 +1,14 @@
-﻿using System.Xml.Linq;
+using System.Xml.Linq;
 
 namespace Qoollo.MpegDash.Mpd;
 
 public class MpdRepresentation : MpdElement
 {
+    private readonly Lazy<MpdSegmentList?> segmentList;
+    private readonly Lazy<MpdSegmentTemplate?> segmentTemplate;
+    private readonly Lazy<IEnumerable<MpdContentProtection>> contentProtections;
+    private readonly Lazy<string?> baseURL;
+
     internal MpdRepresentation(XElement node)
         : base(node)
     {
@@ -13,54 +18,23 @@ public class MpdRepresentation : MpdElement
         baseURL = new Lazy<string?>(ParseBaseURL);
     }
 
-    public string? Id
-    {
-        get { return helper.ParseOptionalString("id"); }
-    }
+    public string? Id => helper.ParseOptionalString("id");
 
-    public uint Bandwidth
-    {
-        get { return helper.ParseMandatoryUint("bandwidth"); }
-    }
+    public uint Bandwidth => helper.ParseMandatoryUint("bandwidth");
 
-    public uint? QualityRanking
-    {
-        get { return helper.ParseOptionalUint("qualityRanking"); }
-    }
+    public uint? QualityRanking => helper.ParseOptionalUint("qualityRanking");
 
-    public string? DependencyId
-    {
-        get { return helper.ParseOptionalString("dependencyId"); }
-    }
+    public string? DependencyId => helper.ParseOptionalString("dependencyId");
 
-    public string? MediaStreamStructureId
-    {
-        get { return helper.ParseOptionalString("mediaStreamStructureId"); }
-    }
+    public string? MediaStreamStructureId => helper.ParseOptionalString("mediaStreamStructureId");
 
-    public MpdSegmentList? SegmentList
-    {
-        get { return segmentList.Value; }
-    }
-    private readonly Lazy<MpdSegmentList?> segmentList;
+    public MpdSegmentList? SegmentList => segmentList.Value;
 
-    public MpdSegmentTemplate? SegmentTemplate
-    {
-        get { return segmentTemplate.Value; }
-    }
-    private readonly Lazy<MpdSegmentTemplate?> segmentTemplate;
+    public MpdSegmentTemplate? SegmentTemplate => segmentTemplate.Value;
 
-    public IEnumerable<MpdContentProtection> ContentProtections
-    {
-        get { return contentProtections.Value; }
-    }
-    private readonly Lazy<IEnumerable<MpdContentProtection>> contentProtections;
+    public IEnumerable<MpdContentProtection> ContentProtections => contentProtections.Value;
 
-    public string? BaseURL
-    {
-        get { return baseURL.Value; }
-    }
-    private readonly Lazy<string?> baseURL;
+    public string? BaseURL => baseURL.Value;
 
     private MpdSegmentList? ParseSegmentList()
     {

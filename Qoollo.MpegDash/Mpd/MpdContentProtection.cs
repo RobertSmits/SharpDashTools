@@ -9,24 +9,13 @@ public class MpdContentProtection : MpdElement
     {
     }
 
-    public string SchemeIdUri
-    {
-        get { return helper.ParseMandatoryString("schemeIdUri"); }
-    }
-    public string? Value
-    {
-        get { return helper.ParseOptionalString("value"); }
-    }
-    public string? DefaultKID
-    {
-        get { return node.Attribute(XName.Get("default_KID", "urn:mpeg:cenc:2013"))?.Value; }
-    }
-    public string? Pssh
-    {
-        get { return node.Element(XName.Get("pssh", "urn:mpeg:cenc:2013"))?.Value; }
-    }
-    public string? Pro
-    {
-        get { return node.Element(XName.Get("pro", "urn:mpeg:cenc:2013"))?.Value; }
-    }
+    public string SchemeIdUri => helper.ParseMandatoryString("schemeIdUri");
+
+    public string? Value => helper.ParseOptionalString("value");
+
+    public string? DefaultKID => node.Attribute(XName.Get("default_KID", "urn:mpeg:cenc:2013"))?.Value;
+
+    public string? Pssh => node.Element(XName.Get("pssh", "urn:mpeg:cenc:2013"))?.Value;
+
+    public string? Pro => node.Element(XName.Get("pro", "urn:mpeg:cenc:2013"))?.Value;
 }

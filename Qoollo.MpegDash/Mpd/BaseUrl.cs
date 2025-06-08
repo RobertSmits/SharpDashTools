@@ -9,8 +9,5 @@ public class BaseUrl : MpdElement
     {
     }
 
-    public string Value
-    {
-        get { return node.Value; }
-    }
+    public string Value => node.Value;
 }

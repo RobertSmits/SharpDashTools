@@ -12,13 +12,7 @@ public abstract class MultipleSegmentBase : SegmentBase
     {
     }
 
-    public uint? Duration
-    {
-        get { return helper.ParseOptionalUint("duration"); }
-    }
+    public uint? Duration => helper.ParseOptionalUint("duration");
 
-    public uint? StartNumber
-    {
-        get { return helper.ParseOptionalUint("startNumber"); }
-    }
+    public uint? StartNumber => helper.ParseOptionalUint("startNumber");
 }

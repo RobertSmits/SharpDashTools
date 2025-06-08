@@ -6,6 +6,8 @@ public class TrackRepresentation
 {
     private readonly MpdAdaptationSet adaptationSet;
     private readonly MpdRepresentation representation;
+    private readonly Lazy<string> initFragmentPath;
+    private readonly Lazy<IEnumerable<string>> fragmentsPaths;
 
     public TrackRepresentation(MpdAdaptationSet adaptationSet, MpdRepresentation representation)
     {
@@ -16,22 +18,11 @@ public class TrackRepresentation
         fragmentsPaths = new Lazy<IEnumerable<string>>(GetFragmentsPaths);
     }
 
-    public string InitFragmentPath
-    {
-        get { return initFragmentPath.Value; }
-    }
-    private readonly Lazy<string> initFragmentPath;
+    public string InitFragmentPath => initFragmentPath.Value;
 
-    public IEnumerable<string> FragmentsPaths
-    {
-        get { return fragmentsPaths.Value; }
-    }
-    private readonly Lazy<IEnumerable<string>> fragmentsPaths;
+    public IEnumerable<string> FragmentsPaths => fragmentsPaths.Value;
 
-    public uint Bandwidth
-    {
-        get { return representation.Bandwidth; }
-    }
+    public uint Bandwidth => representation.Bandwidth;
 
     private string GetInitFragmentPath()
     {

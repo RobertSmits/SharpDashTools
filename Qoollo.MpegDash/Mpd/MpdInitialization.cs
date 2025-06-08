@@ -9,8 +9,5 @@ public class MpdInitialization : MpdElement
     {
     }
 
-    public string SourceUrl
-    {
-        get { return helper.ParseMandatoryString("sourceURL"); }
-    }
+    public string SourceUrl => helper.ParseMandatoryString("sourceURL");
 }
