@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>$(TargetFrameworkVersion)</TargetFramework>
     <ProjectGuid>{17D61727-C15B-4329-AC4A-381D174E76EB}</ProjectGuid>
