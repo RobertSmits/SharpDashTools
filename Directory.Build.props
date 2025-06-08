@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworkVersion>net8.0</TargetFrameworkVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <ImplicitUsings>enable</ImplicitUsings>	  
   </PropertyGroup>
 
 </Project>
