@@ -6,30 +6,30 @@ namespace Qoollo.MpegDash;
 
 public class MpdDownloader : IDisposable
 {
-    private readonly Uri mpdUrl;
-    private readonly string destinationDir;
-    private readonly Lazy<string> mpdFileName;
-    private readonly Lazy<MediaPresentationDescription> mpd;
-    private readonly Lazy<MpdWalker> walker;
-    private readonly int downloadConcurrency;
+    private readonly Uri _mpdUrl;
+    private readonly string _destinationDir;
+    private readonly Lazy<string> _mpdFileName;
+    private readonly Lazy<MediaPresentationDescription> _mpd;
+    private readonly Lazy<MpdWalker> _walker;
+    private readonly int _downloadConcurrency;
 
     public MpdDownloader(Uri mpdUrl, string destinationDir, int downloadConcurrency = 2)
     {
         if (downloadConcurrency < 1)
             throw new ArgumentException("downloadConcurrency cannot be less than 1.", "downloadConcurrency");
 
-        this.mpdUrl = mpdUrl ?? throw new ArgumentNullException(nameof(mpdUrl));
-        this.destinationDir = destinationDir ?? throw new ArgumentNullException(nameof(destinationDir));
-        this.downloadConcurrency = downloadConcurrency;
+        _mpdUrl = mpdUrl ?? throw new ArgumentNullException(nameof(mpdUrl));
+        _destinationDir = destinationDir ?? throw new ArgumentNullException(nameof(destinationDir));
+        _downloadConcurrency = downloadConcurrency;
 
-        mpdFileName = new Lazy<string>(GetMpdFileName);
-        mpd = new Lazy<MediaPresentationDescription>(DownloadMpd);
-        walker = new Lazy<MpdWalker>(CreateMpdWalker);
+        _mpdFileName = new Lazy<string>(GetMpdFileName);
+        _mpd = new Lazy<MediaPresentationDescription>(DownloadMpd);
+        _walker = new Lazy<MpdWalker>(CreateMpdWalker);
     }
 
     public IEnumerable<Track> GetTracksFor(TrackContentType type)
     {
-        return walker.Value.GetTracksFor(type);
+        return _walker.Value.GetTracksFor(type);
     }
 
     public Task<IEnumerable<Mp4File>> Download(TrackRepresentation trackRepresentation)
@@ -266,7 +266,7 @@ public class MpdDownloader : IDisposable
     {
         outputFile = Path.GetFullPath(outputFile);
         var files = Directory.GetFiles(destinationDir);
-        mpd.Value.Dispose();
+        _mpd.Value.Dispose();
         foreach (var f in files)
         {
             string file = Path.GetFullPath(f);
@@ -279,7 +279,7 @@ public class MpdDownloader : IDisposable
     {
         var tasks = new List<Task>();
 
-        foreach (var period in mpd.Value.Periods)
+        foreach (var period in _mpd.Value.Periods)
         {
             foreach (var adaptationSet in period.AdaptationSets)
             {
@@ -292,7 +292,7 @@ public class MpdDownloader : IDisposable
 
         return Task.Factory.ContinueWhenAll(
             tasks.ToArray(),
-            completed => CombineFragments(mpd.Value, mpdFileName.Value, Path.Combine(Path.GetDirectoryName(mpdFileName.Value) ?? string.Empty, "video.mp4")));
+            completed => CombineFragments(_mpd.Value, _mpdFileName.Value, Path.Combine(Path.GetDirectoryName(_mpdFileName.Value) ?? string.Empty, "video.mp4")));
     }
 
     private Task DownloadAllFragments(MpdAdaptationSet adaptationSet, MpdRepresentation representation)
@@ -375,11 +375,11 @@ public class MpdDownloader : IDisposable
         {
             var url = IsAbsoluteUrl(fragmentUrl)
                 ? new Uri(fragmentUrl)
-                : mpd.Value.BaseURL != null
-                ? new Uri(mpd.Value.BaseURL + fragmentUrl)
-                : new Uri(mpdUrl, fragmentUrl);
+                : _mpd.Value.BaseURL != null
+                ? new Uri(_mpd.Value.BaseURL + fragmentUrl)
+                : new Uri(_mpdUrl, fragmentUrl);
 
-            string destPath = Path.Combine(destinationDir, GetFileNameForFragmentUrl(fragmentUrl));
+            string destPath = Path.Combine(_destinationDir, GetFileNameForFragmentUrl(fragmentUrl));
 
             int i = 0;
             while (File.Exists(destPath))
@@ -406,27 +406,27 @@ public class MpdDownloader : IDisposable
 
     private string GetMpdFileName()
     {
-        string mpdFileName = mpdUrl.AbsolutePath;
+        string mpdFileName = _mpdUrl.AbsolutePath;
         if (mpdFileName.Contains("/"))
             mpdFileName = mpdFileName.Substring(mpdFileName.LastIndexOf("/") + 1);
-        string mpdPath = Path.Combine(destinationDir, mpdFileName);
+        string mpdPath = Path.Combine(_destinationDir, mpdFileName);
 
         return mpdPath;
     }
 
     private MediaPresentationDescription DownloadMpd()
     {
-        if (!Directory.Exists(destinationDir))
-            Directory.CreateDirectory(destinationDir);
+        if (!Directory.Exists(_destinationDir))
+            Directory.CreateDirectory(_destinationDir);
         else
-            Directory.GetFiles(destinationDir).ToList().ForEach(f => File.Delete(f));
+            Directory.GetFiles(_destinationDir).ToList().ForEach(f => File.Delete(f));
 
-        return MediaPresentationDescription.FromUrl(mpdUrl, mpdFileName.Value);
+        return MediaPresentationDescription.FromUrl(_mpdUrl, _mpdFileName.Value);
     }
 
     private MpdWalker CreateMpdWalker()
     {
-        return new MpdWalker(mpd.Value);
+        return new MpdWalker(_mpd.Value);
     }
 
     private string GetFileNameForFragmentUrl(string url)
@@ -469,7 +469,7 @@ public class MpdDownloader : IDisposable
 
     public void Dispose()
     {
-        if (mpd.IsValueCreated)
-            mpd.Value.Dispose();
+        if (_mpd.IsValueCreated)
+            _mpd.Value.Dispose();
     }
 }

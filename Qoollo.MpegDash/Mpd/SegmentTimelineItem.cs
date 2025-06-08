@@ -31,7 +31,7 @@ public class SegmentTimelineItem : MpdElement
     /// the previous S element's earliest presentation time and
     /// contiguous duration (i.e.previous S@t + @d* (@r + 1)).
     /// </summary>
-    public ulong? Time => helper.ParseOptionalUlong("t");
+    public ulong? Time => _helper.ParseOptionalUlong("t");
 
     /// <summary>
     /// Mandatory
@@ -39,7 +39,7 @@ public class SegmentTimelineItem : MpdElement
     /// Specifies the Segment duration, in units of the value of
     /// the @timescale.
     /// </summary>
-    public ulong Duration => helper.ParseMandatoryUlong("d");
+    public ulong Duration => _helper.ParseMandatoryUlong("d");
 
     /// <summary>
     /// Optional. Default: 0
@@ -54,5 +54,5 @@ public class SegmentTimelineItem : MpdElement
     /// element, the end of the Period or until the next
     /// MPD update.
     /// </summary>
-    public int RepeatCount => helper.ParseOptionalInt("r", 0).Value;
+    public int RepeatCount => _helper.ParseOptionalInt("r", 0).Value;
 }

@@ -4,42 +4,42 @@ namespace Qoollo.MpegDash;
 
 public class TrackRepresentation
 {
-    private readonly MpdAdaptationSet adaptationSet;
-    private readonly MpdRepresentation representation;
-    private readonly Lazy<string> initFragmentPath;
-    private readonly Lazy<IEnumerable<string>> fragmentsPaths;
+    private readonly MpdAdaptationSet _adaptationSet;
+    private readonly MpdRepresentation _representation;
+    private readonly Lazy<string> _initFragmentPath;
+    private readonly Lazy<IEnumerable<string>> _fragmentsPaths;
 
     public TrackRepresentation(MpdAdaptationSet adaptationSet, MpdRepresentation representation)
     {
-        this.adaptationSet = adaptationSet;
-        this.representation = representation;
+        _adaptationSet = adaptationSet;
+        _representation = representation;
 
-        initFragmentPath = new Lazy<string>(GetInitFragmentPath);
-        fragmentsPaths = new Lazy<IEnumerable<string>>(GetFragmentsPaths);
+        _initFragmentPath = new Lazy<string>(GetInitFragmentPath);
+        _fragmentsPaths = new Lazy<IEnumerable<string>>(GetFragmentsPaths);
     }
 
-    public string InitFragmentPath => initFragmentPath.Value;
+    public string InitFragmentPath => _initFragmentPath.Value;
 
-    public IEnumerable<string> FragmentsPaths => fragmentsPaths.Value;
+    public IEnumerable<string> FragmentsPaths => _fragmentsPaths.Value;
 
-    public uint Bandwidth => representation.Bandwidth;
+    public uint Bandwidth => _representation.Bandwidth;
 
     private string GetInitFragmentPath()
     {
-        var segmentTemplate = representation.SegmentTemplate ?? adaptationSet.SegmentTemplate;
+        var segmentTemplate = _representation.SegmentTemplate ?? _adaptationSet.SegmentTemplate;
         return segmentTemplate switch
         {
             // If SegmentTemplate has Initialization and Representation ID is available
-            _ when segmentTemplate?.Initialization is not null && representation.Id is not null =>
-                segmentTemplate.Initialization.Replace("$RepresentationID$", representation.Id),
+            _ when segmentTemplate?.Initialization is not null && _representation.Id is not null =>
+                segmentTemplate.Initialization.Replace("$RepresentationID$", _representation.Id),
 
             // If SegmentList has Initialization and SourceUrl is available
-            _ when representation.SegmentList?.Initialization?.SourceUrl is not null =>
-                representation.SegmentList.Initialization.SourceUrl,
+            _ when _representation.SegmentList?.Initialization?.SourceUrl is not null =>
+                _representation.SegmentList.Initialization.SourceUrl,
 
             // If BaseURL is available
-            _ when representation.BaseURL is not null =>
-                representation.BaseURL,
+            _ when _representation.BaseURL is not null =>
+                _representation.BaseURL,
 
             // If nothing matches, throw an exception
             _ => throw new Exception("Failed to determine InitFragmentPath")
@@ -48,8 +48,8 @@ public class TrackRepresentation
 
     private IEnumerable<string> GetFragmentsPaths()
     {
-        var segmentTemplate = representation.SegmentTemplate ?? adaptationSet.SegmentTemplate;
-        if (segmentTemplate?.Media is not null && representation.Id is not null)
+        var segmentTemplate = _representation.SegmentTemplate ?? _adaptationSet.SegmentTemplate;
+        if (segmentTemplate?.Media is not null && _representation.Id is not null)
         {
             if (segmentTemplate.SegmentTimeline != null)
             {
@@ -63,7 +63,7 @@ public class TrackRepresentation
                     for (ulong i = 0; i <= (uint)segment.RepeatCount; i++)
                     {
                         var segmentUrl = segmentTemplate.Media
-                            .Replace("$RepresentationID$", representation.Id)
+                            .Replace("$RepresentationID$", _representation.Id)
                             .Replace("$Time$", currentTime.ToString())
                             .Replace("$Number$", currentSegment.ToString());
 
@@ -79,15 +79,15 @@ public class TrackRepresentation
                 while (true) // ToDo break while when done. But when is done?
                 {
                     yield return segmentTemplate.Media
-                        .Replace("$RepresentationID$", representation.Id)
+                        .Replace("$RepresentationID$", _representation.Id)
                         .Replace("$Number$", i.ToString());
                     i++;
                 }
             }
         }
-        else if (representation.SegmentList != null)
+        else if (_representation.SegmentList != null)
         {
-            foreach (var segmentUrl in representation.SegmentList.SegmentUrls.OrderBy(s => s.Index))
+            foreach (var segmentUrl in _representation.SegmentList.SegmentUrls.OrderBy(s => s.Index))
             {
                 yield return segmentUrl.Media;
             }
@@ -98,8 +98,8 @@ public class TrackRepresentation
 
     private IEnumerable<TrackRepresentationSegment> GetSegments()
     {
-        var segmentTemplate = adaptationSet.SegmentTemplate ?? representation.SegmentTemplate;
-        if (segmentTemplate?.Media is not null && representation.Id is not null)
+        var segmentTemplate = _adaptationSet.SegmentTemplate ?? _representation.SegmentTemplate;
+        if (segmentTemplate?.Media is not null && _representation.Id is not null)
         {
             var segments = GetSegmentsFromTimeline(segmentTemplate);
 
@@ -113,7 +113,7 @@ public class TrackRepresentation
 
             if (!hasTimelineItems)
             {
-                segments = GetSegmentsFromRepresentation(representation);
+                segments = GetSegmentsFromRepresentation(_representation);
                 foreach (var segment in segments)
                 {
                     yield return segment;
@@ -121,14 +121,14 @@ public class TrackRepresentation
             }
 
         }
-        else if (representation.SegmentList is not null && representation.SegmentList.Duration.HasValue)
+        else if (_representation.SegmentList is not null && _representation.SegmentList.Duration.HasValue)
         {
-            foreach (var segmentUrl in representation.SegmentList.SegmentUrls.OrderBy(s => s.Index))
+            foreach (var segmentUrl in _representation.SegmentList.SegmentUrls.OrderBy(s => s.Index))
             {
                 yield return new TrackRepresentationSegment
                 {
                     Path = segmentUrl.Media,
-                    Duration = TimeSpan.FromMilliseconds(representation.SegmentList.Duration.Value)
+                    Duration = TimeSpan.FromMilliseconds(_representation.SegmentList.Duration.Value)
                 };
             }
         }
@@ -158,7 +158,7 @@ public class TrackRepresentation
 
     private IEnumerable<TrackRepresentationSegment> GetSegmentsFromTimeline(MpdSegmentTemplate segmentTemplate)
     {
-        if (segmentTemplate.Media is null || segmentTemplate.SegmentTimeline is null || representation.Id is null)
+        if (segmentTemplate.Media is null || segmentTemplate.SegmentTimeline is null || _representation.Id is null)
             yield break;
 
         int i = 1;
@@ -170,7 +170,7 @@ public class TrackRepresentation
                 yield return new TrackRepresentationSegment
                 {
                     Path = segmentTemplate.Media
-                        .Replace("$RepresentationID$", representation.Id)
+                        .Replace("$RepresentationID$", _representation.Id)
                         .Replace("$Number$", i.ToString()),
                     Duration = TimeSpan.FromMilliseconds(item.Duration)
                 };

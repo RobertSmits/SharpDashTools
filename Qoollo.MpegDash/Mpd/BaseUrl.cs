@@ -9,5 +9,5 @@ public class BaseUrl : MpdElement
     {
     }
 
-    public string Value => node.Value;
+    public string Value => _node.Value;
 }

@@ -4,41 +4,41 @@ namespace Qoollo.MpegDash.Mpd;
 
 public class MpdRepresentation : MpdElement
 {
-    private readonly Lazy<MpdSegmentList?> segmentList;
-    private readonly Lazy<MpdSegmentTemplate?> segmentTemplate;
-    private readonly Lazy<IEnumerable<MpdContentProtection>> contentProtections;
-    private readonly Lazy<string?> baseURL;
+    private readonly Lazy<MpdSegmentList?> _segmentList;
+    private readonly Lazy<MpdSegmentTemplate?> _segmentTemplate;
+    private readonly Lazy<IEnumerable<MpdContentProtection>> _contentProtections;
+    private readonly Lazy<string?> _baseURL;
 
     internal MpdRepresentation(XElement node)
         : base(node)
     {
-        segmentList = new Lazy<MpdSegmentList?>(ParseSegmentList);
-        segmentTemplate = new Lazy<MpdSegmentTemplate?>(ParseSegmentTemplate);
-        contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
-        baseURL = new Lazy<string?>(ParseBaseURL);
+        _segmentList = new Lazy<MpdSegmentList?>(ParseSegmentList);
+        _segmentTemplate = new Lazy<MpdSegmentTemplate?>(ParseSegmentTemplate);
+        _contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
+        _baseURL = new Lazy<string?>(ParseBaseURL);
     }
 
-    public string? Id => helper.ParseOptionalString("id");
+    public string? Id => _helper.ParseOptionalString("id");
 
-    public uint Bandwidth => helper.ParseMandatoryUint("bandwidth");
+    public uint Bandwidth => _helper.ParseMandatoryUint("bandwidth");
 
-    public uint? QualityRanking => helper.ParseOptionalUint("qualityRanking");
+    public uint? QualityRanking => _helper.ParseOptionalUint("qualityRanking");
 
-    public string? DependencyId => helper.ParseOptionalString("dependencyId");
+    public string? DependencyId => _helper.ParseOptionalString("dependencyId");
 
-    public string? MediaStreamStructureId => helper.ParseOptionalString("mediaStreamStructureId");
+    public string? MediaStreamStructureId => _helper.ParseOptionalString("mediaStreamStructureId");
 
-    public MpdSegmentList? SegmentList => segmentList.Value;
+    public MpdSegmentList? SegmentList => _segmentList.Value;
 
-    public MpdSegmentTemplate? SegmentTemplate => segmentTemplate.Value;
+    public MpdSegmentTemplate? SegmentTemplate => _segmentTemplate.Value;
 
-    public IEnumerable<MpdContentProtection> ContentProtections => contentProtections.Value;
+    public IEnumerable<MpdContentProtection> ContentProtections => _contentProtections.Value;
 
-    public string? BaseURL => baseURL.Value;
+    public string? BaseURL => _baseURL.Value;
 
     private MpdSegmentList? ParseSegmentList()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "SegmentList")
             .Select(n => new MpdSegmentList(n))
             .FirstOrDefault();
@@ -46,14 +46,14 @@ public class MpdRepresentation : MpdElement
 
     private MpdSegmentTemplate? ParseSegmentTemplate()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "SegmentTemplate")
             .Select(n => new MpdSegmentTemplate(n))
             .FirstOrDefault();
     }
     private string? ParseBaseURL()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "BaseURL")
             .Select(n => n.Value)
             .FirstOrDefault();
@@ -61,7 +61,7 @@ public class MpdRepresentation : MpdElement
 
     private IEnumerable<MpdContentProtection> ParseContentProtections()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "ContentProtection")
             .Select(n => new MpdContentProtection(n));
     }

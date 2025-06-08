@@ -4,21 +4,21 @@ namespace Qoollo.MpegDash;
 
 public class Track
 {
-    private readonly MpdAdaptationSet adaptationSet;
-    private readonly Lazy<IEnumerable<TrackRepresentation>> trackRepresentations;
+    private readonly MpdAdaptationSet _adaptationSet;
+    private readonly Lazy<IEnumerable<TrackRepresentation>> _trackRepresentations;
 
     public Track(MpdAdaptationSet adaptationSet)
     {
-        this.adaptationSet = adaptationSet;
-        trackRepresentations = new Lazy<IEnumerable<TrackRepresentation>>(GetTrackRepresentations);
+        _adaptationSet = adaptationSet;
+        _trackRepresentations = new Lazy<IEnumerable<TrackRepresentation>>(GetTrackRepresentations);
     }
 
-    public string? ContentType => adaptationSet.ContentType;
+    public string? ContentType => _adaptationSet.ContentType;
 
-    public IEnumerable<TrackRepresentation> TrackRepresentations => trackRepresentations.Value;
+    public IEnumerable<TrackRepresentation> TrackRepresentations => _trackRepresentations.Value;
 
     private IEnumerable<TrackRepresentation> GetTrackRepresentations()
     {
-        return adaptationSet.Representations.Select(r => new TrackRepresentation(adaptationSet, r));
+        return _adaptationSet.Representations.Select(r => new TrackRepresentation(_adaptationSet, r));
     }
 }

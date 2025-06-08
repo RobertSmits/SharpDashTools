@@ -4,11 +4,11 @@ namespace Qoollo.MpegDash;
 
 public class MpdWalker
 {
-    private readonly MediaPresentationDescription mpd;
+    private readonly MediaPresentationDescription _mpd;
 
     public MpdWalker(MediaPresentationDescription mpd)
     {
-        this.mpd = mpd;
+        _mpd = mpd;
     }
 
     public IEnumerable<Track> GetTracksFor(TrackContentType type)
@@ -29,7 +29,7 @@ public class MpdWalker
                 throw new ArgumentException($"Unexpected TrackContentType: {type}.");
         }
 
-        return mpd.Periods
+        return _mpd.Periods
             .SelectMany(p => p.AdaptationSets.Where(a => a.ContentType?.Contains(typeText) == true).Select(a => new Track(a)));
     }
 

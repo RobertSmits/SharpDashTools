@@ -4,13 +4,12 @@ namespace Qoollo.MpegDash.Mpd;
 
 public abstract class MpdElement
 {
-    protected readonly XElement node;
-
-    protected readonly XmlAttributeParseHelper helper;
+    protected readonly XElement _node;
+    protected readonly XmlAttributeParseHelper _helper;
 
     internal MpdElement(XElement node)
     {
-        this.node = node;
-        this.helper = new XmlAttributeParseHelper(node);
+        _node = node;
+        _helper = new XmlAttributeParseHelper(node);
     }
 }

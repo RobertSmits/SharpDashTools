@@ -7,12 +7,12 @@ namespace Qoollo.MpegDash.Mpd;
 /// </summary>
 public class MpdSegmentTemplate : MultipleSegmentBase
 {
-    private readonly SegmentTimeline? segmentTimeline;
+    private readonly SegmentTimeline? _segmentTimeline;
 
     internal MpdSegmentTemplate(XElement node)
         : base(node)
     {
-        segmentTimeline = ParseSegmentTimeline();
+        _segmentTimeline = ParseSegmentTimeline();
     }
 
     /// <summary>
@@ -20,7 +20,7 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     ///
     /// Specifies the template to create the Media Segment List.
     /// </summary>
-    public string? Media => helper.ParseOptionalString("media");
+    public string? Media => _helper.ParseOptionalString("media");
 
     /// <summary>
     /// Optional
@@ -29,7 +29,7 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     /// If neither the $Number$ nor the $Time$ identifier is included,
     /// this provides the URL to a Representation Index.
     /// </summary>
-    public string? Index => helper.ParseOptionalString("index");
+    public string? Index => _helper.ParseOptionalString("index");
 
     /// <summary>
     /// Optional
@@ -37,7 +37,7 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     /// Specifies the template to create the Initialization Segment.
     /// Neither $Number$ nor the $Time$ identifier shall be included.
     /// </summary>
-    public string? Initialization => helper.ParseOptionalString("initialization");
+    public string? Initialization => _helper.ParseOptionalString("initialization");
 
     /// <summary>
     /// Optional
@@ -45,13 +45,13 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     /// Specifies the template to create the Bitstream Switching Segment.
     /// Neither $Number$ nor the $Time$ identifier shall be included.
     /// </summary>
-    public bool BitstreamSwitching => helper.ParseOptionalBool("bitstreamSwitching", false);
+    public bool BitstreamSwitching => _helper.ParseOptionalBool("bitstreamSwitching", false);
 
-    public SegmentTimeline? SegmentTimeline => segmentTimeline;
+    public SegmentTimeline? SegmentTimeline => _segmentTimeline;
 
     private SegmentTimeline? ParseSegmentTimeline()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "SegmentTimeline")
             .Select(n => new SegmentTimeline(n))
             .FirstOrDefault();

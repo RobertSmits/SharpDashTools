@@ -9,7 +9,7 @@ public class MpdSegmentUrl : MpdElement
     {
     }
 
-    public int Index => helper.ParseMandatoryInt("index");
+    public int Index => _helper.ParseMandatoryInt("index");
 
-    public string Media => helper.ParseMandatoryString("media");
+    public string Media => _helper.ParseMandatoryString("media");
 }

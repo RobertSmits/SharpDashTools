@@ -4,63 +4,63 @@ namespace Qoollo.MpegDash.Mpd;
 
 public class MpdAdaptationSet : MpdElement
 {
-    private readonly Lazy<MpdValue?> audioChannelConfiguration;
-    private readonly Lazy<MpdValue?> accessibility;
-    private readonly Lazy<MpdValue?> role;
-    private readonly Lazy<MpdSegmentTemplate?> segmentTemplate;
-    private readonly Lazy<IEnumerable<MpdRepresentation>> representations;
-    private readonly Lazy<IEnumerable<MpdContentProtection>> contentProtections;
+    private readonly Lazy<MpdValue?> _audioChannelConfiguration;
+    private readonly Lazy<MpdValue?> _accessibility;
+    private readonly Lazy<MpdValue?> _role;
+    private readonly Lazy<MpdSegmentTemplate?> _segmentTemplate;
+    private readonly Lazy<IEnumerable<MpdRepresentation>> _representations;
+    private readonly Lazy<IEnumerable<MpdContentProtection>> _contentProtections;
 
     internal MpdAdaptationSet(XElement node)
         : base(node)
     {
-        audioChannelConfiguration = new Lazy<MpdValue?>(ParseAudioChannelConfiguration);
-        accessibility = new Lazy<MpdValue?>(ParseAccessibility);
-        role = new Lazy<MpdValue?>(ParseRole);
-        segmentTemplate = new Lazy<MpdSegmentTemplate?>(ParseSegmentTemplate);
-        representations = new Lazy<IEnumerable<MpdRepresentation>>(ParseRepresentations);
-        contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
+        _audioChannelConfiguration = new Lazy<MpdValue?>(ParseAudioChannelConfiguration);
+        _accessibility = new Lazy<MpdValue?>(ParseAccessibility);
+        _role = new Lazy<MpdValue?>(ParseRole);
+        _segmentTemplate = new Lazy<MpdSegmentTemplate?>(ParseSegmentTemplate);
+        _representations = new Lazy<IEnumerable<MpdRepresentation>>(ParseRepresentations);
+        _contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
     }
 
-    public uint? Id => helper.ParseOptionalUint("id");
+    public uint? Id => _helper.ParseOptionalUint("id");
 
-    public uint? Group => helper.ParseOptionalUint("group");
+    public uint? Group => _helper.ParseOptionalUint("group");
 
-    public string? Lang => node.Attribute("lang")?.Value;
+    public string? Lang => _node.Attribute("lang")?.Value;
 
-    public string? ContentType => helper.ParseOptionalString("contentType") ?? helper.ParseOptionalString("mimeType");
+    public string? ContentType => _helper.ParseOptionalString("contentType") ?? _helper.ParseOptionalString("mimeType");
 
-    public AspectRatio? Par => helper.ParseOptionalAspectRatio("par");
+    public AspectRatio? Par => _helper.ParseOptionalAspectRatio("par");
 
-    public uint? MinBandwidth => helper.ParseOptionalUint("minBandwidth");
+    public uint? MinBandwidth => _helper.ParseOptionalUint("minBandwidth");
 
-    public uint? MaxBandwidth => helper.ParseOptionalUint("maxBandwidth");
+    public uint? MaxBandwidth => _helper.ParseOptionalUint("maxBandwidth");
 
-    public uint? MinWidth => helper.ParseOptionalUint("minWidth");
+    public uint? MinWidth => _helper.ParseOptionalUint("minWidth");
 
-    public uint? MaxWidth => helper.ParseOptionalUint("maxWidth");
+    public uint? MaxWidth => _helper.ParseOptionalUint("maxWidth");
 
-    public uint? MinHeight => helper.ParseOptionalUint("minHeight");
+    public uint? MinHeight => _helper.ParseOptionalUint("minHeight");
 
-    public uint? MaxHeight => helper.ParseOptionalUint("maxHeight");
+    public uint? MaxHeight => _helper.ParseOptionalUint("maxHeight");
 
-    public FrameRate? MinFrameRate => helper.ParseOptionalFrameRate("minFrameRate");
+    public FrameRate? MinFrameRate => _helper.ParseOptionalFrameRate("minFrameRate");
 
-    public FrameRate? MaxFrameRate => helper.ParseOptionalFrameRate("maxFrameRate");
+    public FrameRate? MaxFrameRate => _helper.ParseOptionalFrameRate("maxFrameRate");
 
-    public bool SegmentAlignment => helper.ParseOptionalBool("segmentAlignment", false);
+    public bool SegmentAlignment => _helper.ParseOptionalBool("segmentAlignment", false);
 
-    public bool BitstreamSwitching => helper.ParseOptionalBool("bitstreamSwitching", false);
+    public bool BitstreamSwitching => _helper.ParseOptionalBool("bitstreamSwitching", false);
 
-    public bool SubsegmentAlignment => helper.ParseOptionalBool("subsegmentAlignment", false);
+    public bool SubsegmentAlignment => _helper.ParseOptionalBool("subsegmentAlignment", false);
 
-    public uint? SubsegmentStartsWithSAP => helper.ParseOptionalUint("subsegmentStartsWithSAP") ?? helper.ParseOptionalUint("startWithSAP");
+    public uint? SubsegmentStartsWithSAP => _helper.ParseOptionalUint("subsegmentStartsWithSAP") ?? _helper.ParseOptionalUint("startWithSAP");
 
-    public MpdValue? AudioChannelConfiguration => audioChannelConfiguration.Value;
+    public MpdValue? AudioChannelConfiguration => _audioChannelConfiguration.Value;
 
-    public MpdValue? Accessibility => accessibility.Value;
+    public MpdValue? Accessibility => _accessibility.Value;
 
-    public MpdValue? Role => role.Value;
+    public MpdValue? Role => _role.Value;
 
     /// <summary>
     /// Specifies default Segment Template information.
@@ -69,15 +69,15 @@ public class MpdAdaptationSet : MpdElement
     /// AdapationSet.SegmentTemplate and
     /// Representation.SegmentTemplate, if present.
     /// </summary>
-    public MpdSegmentTemplate? SegmentTemplate => segmentTemplate.Value;
+    public MpdSegmentTemplate? SegmentTemplate => _segmentTemplate.Value;
 
-    public IEnumerable<MpdRepresentation> Representations => representations.Value;
+    public IEnumerable<MpdRepresentation> Representations => _representations.Value;
 
-    public IEnumerable<MpdContentProtection> ContentProtections => contentProtections.Value;
+    public IEnumerable<MpdContentProtection> ContentProtections => _contentProtections.Value;
 
     private MpdValue? ParseAudioChannelConfiguration()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "AudioChannelConfiguration")
             .Select(n => new MpdValue(n))
             .FirstOrDefault();
@@ -85,7 +85,7 @@ public class MpdAdaptationSet : MpdElement
 
     private MpdValue? ParseAccessibility()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "Accessibility")
             .Select(n => new MpdValue(n))
             .FirstOrDefault();
@@ -93,7 +93,7 @@ public class MpdAdaptationSet : MpdElement
 
     private MpdValue? ParseRole()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "Role")
             .Select(n => new MpdValue(n))
             .FirstOrDefault();
@@ -101,7 +101,7 @@ public class MpdAdaptationSet : MpdElement
 
     private MpdSegmentTemplate? ParseSegmentTemplate()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "SegmentTemplate")
             .Select(n => new MpdSegmentTemplate(n))
             .FirstOrDefault();
@@ -109,14 +109,14 @@ public class MpdAdaptationSet : MpdElement
 
     private IEnumerable<MpdRepresentation> ParseRepresentations()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "Representation")
             .Select(n => new MpdRepresentation(n));
     }
 
     private IEnumerable<MpdContentProtection> ParseContentProtections()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "ContentProtection")
             .Select(n => new MpdContentProtection(n));
     }

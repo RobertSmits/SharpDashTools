@@ -2,12 +2,12 @@
 
 public class Mp4File
 {
-    private readonly string path;
-    
+    private readonly string _path;
+
     public Mp4File(string path)
     {
-        this.path = path;
+        _path = path;
     }
 
-    public string Path => path;
+    public string Path => _path;
 }

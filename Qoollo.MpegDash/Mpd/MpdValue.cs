@@ -9,7 +9,7 @@ public class MpdValue : MpdElement
     {
     }
 
-    public string SchemeIdUri => helper.ParseMandatoryString("schemeIdUri");
+    public string SchemeIdUri => _helper.ParseMandatoryString("schemeIdUri");
 
-    public string Value => helper.ParseMandatoryString("value");
+    public string Value => _helper.ParseMandatoryString("value");
 }

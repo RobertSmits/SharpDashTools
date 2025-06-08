@@ -4,27 +4,27 @@ namespace Qoollo.MpegDash.Mpd;
 
 public class MpdSegmentList : MpdElement
 {
-    private readonly Lazy<MpdInitialization?> initialization;
-    private readonly Lazy<IEnumerable<MpdSegmentUrl>> segmentUrls;
+    private readonly Lazy<MpdInitialization?> _initialization;
+    private readonly Lazy<IEnumerable<MpdSegmentUrl>> _segmentUrls;
 
     internal MpdSegmentList(XElement node)
         : base(node)
     {
-        initialization = new Lazy<MpdInitialization?>(ParseInitialization);
-        segmentUrls = new Lazy<IEnumerable<MpdSegmentUrl>>(ParseSegmentUrls);
+        _initialization = new Lazy<MpdInitialization?>(ParseInitialization);
+        _segmentUrls = new Lazy<IEnumerable<MpdSegmentUrl>>(ParseSegmentUrls);
     }
 
-    public uint? Timescale => helper.ParseOptionalUint("timescale");
+    public uint? Timescale => _helper.ParseOptionalUint("timescale");
 
-    public uint? Duration => helper.ParseOptionalUint("duration");
+    public uint? Duration => _helper.ParseOptionalUint("duration");
 
-    public MpdInitialization? Initialization => initialization.Value;
+    public MpdInitialization? Initialization => _initialization.Value;
 
-    public IEnumerable<MpdSegmentUrl> SegmentUrls => segmentUrls.Value;
+    public IEnumerable<MpdSegmentUrl> SegmentUrls => _segmentUrls.Value;
 
     private MpdInitialization? ParseInitialization()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "Initialization")
             .Select(n => new MpdInitialization(n))
             .FirstOrDefault();
@@ -32,7 +32,7 @@ public class MpdSegmentList : MpdElement
 
     private IEnumerable<MpdSegmentUrl> ParseSegmentUrls()
     {
-        return node.Elements()
+        return _node.Elements()
             .Where(n => n.Name.LocalName == "SegmentURL")
             .Select(n => new MpdSegmentUrl(n));
     }

@@ -5,11 +5,11 @@ namespace Qoollo.MpegDash.Tests;
 
 public class MpdDownloaderTests : IClassFixture<MpdFixture>
 {
-    private MediaPresentationDescription mpd;
+    private MediaPresentationDescription _mpd;
 
     public MpdDownloaderTests(MpdFixture mpdFixture)
     {
-        this.mpd = mpdFixture.Mpd;
+        _mpd = mpdFixture.Mpd;
     }
 
     [Fact]

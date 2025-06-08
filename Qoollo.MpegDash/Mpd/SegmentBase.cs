@@ -9,15 +9,15 @@ public class SegmentBase : MpdElement
     {
     }
 
-    public uint? Timescale => helper.ParseOptionalUint("timescale");
+    public uint? Timescale => _helper.ParseOptionalUint("timescale");
 
-    public ulong? PresentationTimeOffset => helper.ParseOptionalUlong("presentationTimeOffset");
+    public ulong? PresentationTimeOffset => _helper.ParseOptionalUlong("presentationTimeOffset");
 
-    public string IndexRange => helper.ParseMandatoryString("indexRange");
+    public string IndexRange => _helper.ParseMandatoryString("indexRange");
 
-    public bool IndexRangeExact => helper.ParseOptionalBool("indexRangeExact", false);
+    public bool IndexRangeExact => _helper.ParseOptionalBool("indexRangeExact", false);
 
-    public double? AvailabilityTimeOffset => helper.ParseOptionalDouble("availabilityTimeOffset");
+    public double? AvailabilityTimeOffset => _helper.ParseOptionalDouble("availabilityTimeOffset");
 
-    public bool AvailabilityTimeComplete => helper.ParseOptionalBool("availabilityTimeComplete", false);
+    public bool AvailabilityTimeComplete => _helper.ParseOptionalBool("availabilityTimeComplete", false);
 }
