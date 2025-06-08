@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace Qoollo.MpegDash.Mpd;
 
@@ -35,15 +34,14 @@ public class MediaPresentationDescription : IDisposable
         _periods = new Lazy<IEnumerable<MpdPeriod>>(ParsePeriods);
     }
 
-    public static MediaPresentationDescription FromUrl(Uri url, string? saveFilePath = null)
+    public static async Task<MediaPresentationDescription> FromUrlAsync(Uri url, string? saveFilePath = null, CancellationToken cancellationToken = default)
     {
-        if (saveFilePath == null)
-            saveFilePath = Path.GetTempFileName();
-        using (var client = new WebClient())
-        {
-            client.DownloadFile(url, saveFilePath);
-            return new MediaPresentationDescription(saveFilePath);
-        }
+        saveFilePath ??= Path.GetTempFileName();
+        using var client = new HttpClient();
+        using var data = await client.GetStreamAsync(url, cancellationToken);
+        await using var fs = File.Create(saveFilePath);
+        await data.CopyToAsync(fs, cancellationToken);
+        return new MediaPresentationDescription(saveFilePath);
     }
 
     public DateTimeOffset FetchTime => _fetchTime.Value;
@@ -88,11 +86,9 @@ public class MediaPresentationDescription : IDisposable
 
     public void Save(string filename)
     {
-        using (var fileStream = File.OpenWrite(filename))
-        {
-            _stream.CopyTo(fileStream);
-            _stream.Seek(0, SeekOrigin.Begin);
-        }
+        using var fileStream = File.OpenWrite(filename);
+        _stream.CopyTo(fileStream);
+        _stream.Seek(0, SeekOrigin.Begin);
     }
 
     private XElement ReadMpdTag()
@@ -100,12 +96,10 @@ public class MediaPresentationDescription : IDisposable
         var doc = XDocument.Load(_stream);
         return doc.Root ?? throw new Exception();
 
-        //using (var reader = XmlReader.Create(stream))
-        //{
-        //    stream.Seek(0, SeekOrigin.Begin);
-        //    reader.ReadToFollowing("MPD");
-        //    return XNode.ReadFrom(reader) as XElement;
-        //}
+        //using var reader = XmlReader.Create(stream);
+        //stream.Seek(0, SeekOrigin.Begin);
+        //reader.ReadToFollowing("MPD");
+        //return XNode.ReadFrom(reader) as XElement;
     }
 
     private IEnumerable<MpdPeriod> ParsePeriods()
@@ -119,6 +113,7 @@ public class MediaPresentationDescription : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         if (_streamIsOwned)
             _stream.Dispose();
     }

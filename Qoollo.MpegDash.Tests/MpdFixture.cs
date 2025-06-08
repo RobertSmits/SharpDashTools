@@ -12,6 +12,7 @@ public class MpdFixture : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         Stream.Dispose();
     }
 

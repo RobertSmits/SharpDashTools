@@ -5,7 +5,7 @@ namespace Qoollo.MpegDash.Tests;
 
 public class MediaPresentationDescriptionTests : IClassFixture<MpdFixture>
 {
-    private MediaPresentationDescription _mpd;
+    private readonly MediaPresentationDescription _mpd;
 
     public MediaPresentationDescriptionTests(MpdFixture mpdFixture)
     {
@@ -93,7 +93,7 @@ public class MediaPresentationDescriptionTests : IClassFixture<MpdFixture>
     [Fact]
     public void Periods_Count()
     {
-        Assert.Equal(1, _mpd.Periods.Count());
+        Assert.Single(_mpd.Periods);
     }
 
     [Fact]

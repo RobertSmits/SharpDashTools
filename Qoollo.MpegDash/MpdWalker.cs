@@ -13,27 +13,19 @@ public class MpdWalker
 
     public IEnumerable<Track> GetTracksFor(TrackContentType type)
     {
-        string typeText;
-        switch (type)
+        var typeText = type switch
         {
-            case TrackContentType.Video:
-                typeText = "video";
-                break;
-            case TrackContentType.Audio:
-                typeText = "video";
-                break;
-            case TrackContentType.Text:
-                typeText = "video";
-                break;
-            default:
-                throw new ArgumentException($"Unexpected TrackContentType: {type}.");
-        }
+            TrackContentType.Video => "video",
+            TrackContentType.Audio => "video",
+            TrackContentType.Text => "video",
+            _ => throw new ArgumentException($"Unexpected TrackContentType: {type}."),
+        };
 
         return _mpd.Periods
             .SelectMany(p => p.AdaptationSets.Where(a => a.ContentType?.Contains(typeText) == true).Select(a => new Track(a)));
     }
 
-    public IEnumerable<Uri> GetAllFragmentsUrls()
+    public static IEnumerable<Uri> GetAllFragmentsUrls()
     {
         var res = new List<Uri>();
 
@@ -72,7 +64,7 @@ public class MpdWalker
     //        // Period PeriodStart is the sum of the start time of the previous
     //        // Period PeriodStart and the value of the attribute @duration
     //        // of the previous Period.
-    //        else if (p1 != null && p.Duration.HasValue && vo1 != null)
+    //        else if (p1 is not null && p.Duration.HasValue && vo1 is not null)
     //        {
     //            vo = new Period();
     //            vo.Start = vo1.Start + vo1.Duration;
@@ -90,22 +82,22 @@ public class MpdWalker
     //        // The Period extends until the PeriodStart of the next Period.
     //        // The difference between the PeriodStart time of a Period and
     //        // the PeriodStart time of the following Period.
-    //        if (vo1 != null && vo1.Duration == default(TimeSpan))
+    //        if (vo1 is not null && vo1.Duration == default(TimeSpan))
     //        {
     //            vo1.Duration = vo.Start - vo1.Start;
     //        }
 
-    //        if (vo != null)
+    //        if (vo is not null)
     //        {
     //            vo.Id = GetPeriodId(p);
     //        }
 
-    //        if (vo != null && p.Duration.HasValue)
+    //        if (vo is not null && p.Duration.HasValue)
     //        {
     //            vo.Duration = p.Duration.Value;
     //        }
 
-    //        if (vo != null)
+    //        if (vo is not null)
     //        {
     //            vo.index = i;
     //            vo.mpd = mpd;
@@ -118,7 +110,7 @@ public class MpdWalker
     //        vo = null;
     //    }
 
-    //    if (periods.Any() && vo1 != null && !vo1.Duration.HasValue)
+    //    if (periods.Any() && vo1 is not null && !vo1.Duration.HasValue)
     //        vo1.Duration = GetEndTimeForLastPeriod(vo1) - vo1.Start.Value;
 
     //    return periods;
@@ -177,19 +169,11 @@ public class MpdWalker
     //    return timelineConverter.calcPresentationTimeFromWallTime(mpd.loadedTime, period);
     //}
 
-    private string GetPeriodId(Period period)
+    private static string GetPeriodId(Period period)
     {
-        if (period == null)
-            throw new ArgumentNullException(nameof(period));
-
-        var res = Period.DEFAULT_ID;
-
-        if (!string.IsNullOrWhiteSpace(period.Id))
-        {
-            res = period.Id;
-        }
-
-        return res;
+        return !string.IsNullOrWhiteSpace(period.Id)
+            ? period.Id
+            : Period.DEFAULT_ID;
     }
 
     private class Period

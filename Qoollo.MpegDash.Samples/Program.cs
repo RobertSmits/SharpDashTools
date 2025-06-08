@@ -6,15 +6,15 @@ namespace Qoollo.MpegDash.Samples;
 
 class Program
 {
-    private static readonly string[] mpdFiles = new string[]
-    {
+    private static readonly string[] mpdFiles =
+    [
         "http://ncplusgo.s43-po.live.e56-po.insyscd.net/out/u/eskatvsd.mpd",
         "http://dash.edgesuite.net/envivio/EnvivioDash3/manifest.mpd",
         "http://dash.edgesuite.net/dash264/TestCases/1a/netflix/exMPD_BIP_TC1.mpd",
         "http://10.5.5.7/q/p/userapi/streams/32/mpd",
         "http://10.5.7.207/userapi/streams/30/mpd",
         "http://10.5.7.207/userapi/streams/11/mpd?start_time=1458816642&stop_time=1458819642",
-    };
+    ];
 
     static void Main(string[] args)
     {
@@ -88,23 +88,25 @@ class Program
         var trackRepresentation = track.TrackRepresentations.OrderByDescending(r => r.Bandwidth).First();
         var dir = Path.GetDirectoryName(mpdFilePath) ?? string.Empty;
 
-        using (var stream = File.OpenWrite(outputFile))
-        using (var writer = new BinaryWriter(stream))
+        string fragmentPath = Path.Combine(dir, trackRepresentation.InitFragmentPath);
+        using var outputStream = File.Open(outputFile, FileMode.Append, FileAccess.Write);
+        using (var initStream = File.OpenRead(fragmentPath))
         {
-            string fragmentPath = Path.Combine(dir, trackRepresentation.InitFragmentPath);
-            writer.Write(File.ReadAllBytes(fragmentPath));
-
-            foreach (var path in trackRepresentation.FragmentsPaths)
-            {
-                fragmentPath = Path.Combine(dir, path);
-                if (!File.Exists(fragmentPath))
-                    break;
-                writer.Write(File.ReadAllBytes(fragmentPath));
-            }
+            await initStream.CopyToAsync(outputStream);
         }
 
-        string[] files = new[]
+        foreach (var path in trackRepresentation.FragmentsPaths)
         {
+            fragmentPath = Path.Combine(dir, path);
+            if (!File.Exists(fragmentPath))
+                break;
+
+            using var fragmentStream = File.OpenRead(fragmentPath);
+            await fragmentStream.CopyToAsync(outputStream);
+        }
+
+        string[] files =
+        [
             "v1_257-Header.m4s",
             "v1_257-270146-i-1.m4s",
             "v1_257-270146-i-2.m4s",
@@ -203,14 +205,13 @@ class Program
             "v1_257-270146-i-95.m4s",
             "v1_257-270146-i-96.m4s",
             "v1_257-270146-i-97.m4s",
-        };
+        ];
+
         //string outputFile = Path.Combine(Path.GetDirectoryName(mpdFilePath), "output.mp4");
-        //using (var stream = File.OpenWrite(outputFile))
-        //using (var writer = new BinaryWriter(stream))
-        //{
-        //    files.Select(f => Path.Combine(Path.GetDirectoryName(mpdFilePath), f))
-        //        .ToList()
-        //        .ForEach(f => writer.Write(File.ReadAllBytes(f)));
-        //}
+        //using var stream = File.OpenWrite(outputFile);
+        //using var writer = new BinaryWriter(stream);
+        //files.Select(f => Path.Combine(Path.GetDirectoryName(mpdFilePath), f))
+        //    .ToList()
+        //    .ForEach(f => writer.Write(File.ReadAllBytes(f)));
     }
 }

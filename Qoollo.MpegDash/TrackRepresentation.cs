@@ -51,7 +51,7 @@ public class TrackRepresentation
         var segmentTemplate = _representation.SegmentTemplate ?? _adaptationSet.SegmentTemplate;
         if (segmentTemplate?.Media is not null && _representation.Id is not null)
         {
-            if (segmentTemplate.SegmentTimeline != null)
+            if (segmentTemplate.SegmentTimeline is not null)
             {
                 ulong currentTime = 0;
                 ulong currentSegment = segmentTemplate.StartNumber ?? 0;
@@ -85,7 +85,7 @@ public class TrackRepresentation
                 }
             }
         }
-        else if (_representation.SegmentList != null)
+        else if (_representation.SegmentList is not null)
         {
             foreach (var segmentUrl in _representation.SegmentList.SegmentUrls.OrderBy(s => s.Index))
             {
@@ -137,7 +137,7 @@ public class TrackRepresentation
             yield break;
     }
 
-    private IEnumerable<TrackRepresentationSegment> GetSegmentsFromRepresentation(MpdRepresentation representation)
+    private static IEnumerable<TrackRepresentationSegment> GetSegmentsFromRepresentation(MpdRepresentation representation)
     {
         if (representation.SegmentTemplate?.Media is null || !representation.SegmentTemplate.Duration.HasValue)
             yield break;

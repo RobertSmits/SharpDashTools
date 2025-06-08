@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using Qoollo.MpegDash.Mpd;
 
 namespace Qoollo.MpegDash;
@@ -16,14 +15,14 @@ public class MpdDownloader : IDisposable
     public MpdDownloader(Uri mpdUrl, string destinationDir, int downloadConcurrency = 2)
     {
         if (downloadConcurrency < 1)
-            throw new ArgumentException("downloadConcurrency cannot be less than 1.", "downloadConcurrency");
+            throw new ArgumentException("downloadConcurrency cannot be less than 1.", nameof(downloadConcurrency));
 
         _mpdUrl = mpdUrl ?? throw new ArgumentNullException(nameof(mpdUrl));
         _destinationDir = destinationDir ?? throw new ArgumentNullException(nameof(destinationDir));
         _downloadConcurrency = downloadConcurrency;
 
         _mpdFileName = new Lazy<string>(GetMpdFileName);
-        _mpd = new Lazy<MediaPresentationDescription>(DownloadMpd);
+        _mpd = new Lazy<MediaPresentationDescription>(DownloadMpdAsync().Result);
         _walker = new Lazy<MpdWalker>(CreateMpdWalker);
     }
 
@@ -67,15 +66,13 @@ public class MpdDownloader : IDisposable
         return new FileInfo(outFile);
     }
 
-    private void ConcatFiles(IEnumerable<string> files, string outFile)
+    private static void ConcatFiles(IEnumerable<string> files, string outFile)
     {
-        using (var stream = File.OpenWrite(outFile))
+        using var stream = File.OpenWrite(outFile);
+        foreach (var f in files)
         {
-            foreach (var f in files)
-            {
-                var bytes = File.ReadAllBytes(f);
-                stream.Write(bytes, 0, bytes.Length);
-            }
+            var bytes = File.ReadAllBytes(f);
+            stream.Write(bytes, 0, bytes.Length);
         }
     }
 
@@ -88,7 +85,7 @@ public class MpdDownloader : IDisposable
 
         var cmdBuilder = new StringBuilder(maxCmdLength);
         var initFile = chunks.OfType<Mp4InitFile>().First();
-        var files = chunks.Except(new[] { initFile }).ToList();
+        var files = chunks.Except([initFile]).ToList();
 
         cmdBuilder.AppendFormat("-i \"concat:{0}", ConvertPathForFfmpeg(initFile.Path));
         if (File.Exists(outputFile))
@@ -96,7 +93,7 @@ public class MpdDownloader : IDisposable
         string cmdEnd = "\" -c copy " + ConvertPathForFfmpeg(outputFile);
 
         bool overflow = false;
-        while (!overflow && files.Any())
+        while (!overflow && files.Count != 0)
         {
             string toAppend = "|" + ConvertPathForFfmpeg(files[0].Path);
             if (cmdBuilder.Length + toAppend.Length + cmdEnd.Length > maxCmdLength)
@@ -113,7 +110,7 @@ public class MpdDownloader : IDisposable
         cmdBuilder.Clear();
 
         FileInfo res;
-        if (files.Any())
+        if (files.Count != 0)
         {
             files.Insert(0, new Mp4InitFile(outputFile));
             res = CombineChunksFastOld(files, ffmpegRunner, maxCmdLength);
@@ -158,7 +155,7 @@ public class MpdDownloader : IDisposable
         return new FileInfo(outFile);
     }
 
-    private string ConvertPathForFfmpeg(string path)
+    private static string ConvertPathForFfmpeg(string path)
     {
         return path.Replace("\\", "/");
     }
@@ -188,7 +185,7 @@ public class MpdDownloader : IDisposable
                 succeeded.ForEach(t => files.Add(t.Result));
 
                 downloadedCount += succeeded.Count;
-                complete = !tasks.Any() || succeeded.Count != tasks.Count;
+                complete = tasks.Count == 0 || succeeded.Count != tasks.Count;
             }
 
             //var chunks = ProcessChunks(initFile, files);
@@ -203,36 +200,31 @@ public class MpdDownloader : IDisposable
             throw new Exception("Failed to download init file");
     }
 
-    private IEnumerable<Mp4File> ProcessChunks(IEnumerable<Mp4File> files)
+    private static IEnumerable<Mp4File> ProcessChunks(IEnumerable<Mp4File> files)
     {
-        List<Mp4File> res;
-
         var initFile = files.OfType<Mp4InitFile>().FirstOrDefault();
-        if (initFile != null)
-        {
-            res = new List<Mp4File>();
+        if (initFile is null)
+            return [.. files];
 
-            var initFileBytes = File.ReadAllBytes(initFile.Path);
-            foreach (var f in files)
+        var res = new List<Mp4File>();
+        var initFileBytes = File.ReadAllBytes(initFile.Path);
+        foreach (var f in files)
+        {
+            var bytes = File.ReadAllBytes(f.Path);
+            if (!bytes.StartsWith(initFileBytes))
             {
-                var bytes = File.ReadAllBytes(f.Path);
-                if (!bytes.StartsWith(initFileBytes))
-                {
-                    bytes = initFileBytes.Concat(bytes).ToArray();
-                    File.WriteAllBytes(f.Path, bytes);
-                    res.Add(f);
-                }
+                bytes = initFileBytes.Concat(bytes).ToArray();
+                File.WriteAllBytes(f.Path, bytes);
+                res.Add(f);
             }
         }
-        else
-            res = new List<Mp4File>(files);
 
         return res;
 
         //string outputFile = Path.Combine(destinationDir, DateTime.Now.ToString("yyyyMMddHHmmss") + "_video.mp4");
-        //using (var stream = File.OpenWrite(outputFile))
-        //using (var writer = new BinaryWriter(stream))
-        //{
+        //using var stream = File.OpenWrite(outputFile);
+        //using var writer = new BinaryWriter(stream);
+        //
         //foreach (var f in files.Skip(1))
         //{
         //    var bytes = File.ReadAllBytes(f);
@@ -242,10 +234,9 @@ public class MpdDownloader : IDisposable
         //    //    writer.Write(bytes, offset - mdatBytes.Length, bytes.Length - offset + mdatBytes.Length);
         //    writer.Write(bytes);
         //}
-        //}
     }
 
-    private int FindAtomOffset(byte[] chunkBytes, byte[] atomBytes)
+    private static int FindAtomOffset(byte[] chunkBytes, byte[] atomBytes)
     {
         int mdatOffset = -1;
         for (int i = 0; i < chunkBytes.Length - atomBytes.Length && mdatOffset < 0; i++)
@@ -300,26 +291,24 @@ public class MpdDownloader : IDisposable
         return Task.Factory.StartNew(() => DownloadFragmentsUntilFirstFailure(adaptationSet, representation));
     }
 
-    private string CombineFragments(MediaPresentationDescription mpd, string mpdFilePath, string outputFilePath)
+    private static string CombineFragments(MediaPresentationDescription mpd, string mpdFilePath, string outputFilePath)
     {
         var walker = new MpdWalker(mpd);
         var track = walker.GetTracksFor(TrackContentType.Video).First();
         var trackRepresentation = track.TrackRepresentations.OrderByDescending(r => r.Bandwidth).First();
 
         var dir = Path.GetDirectoryName(mpdFilePath) ?? string.Empty;
-        using (var stream = File.OpenWrite(outputFilePath))
-        using (var writer = new BinaryWriter(stream))
-        {
-            string fragmentPath = Path.Combine(dir, trackRepresentation.InitFragmentPath);
-            writer.Write(File.ReadAllBytes(fragmentPath));
+        using var stream = File.OpenWrite(outputFilePath);
+        using var writer = new BinaryWriter(stream);
+        string fragmentPath = Path.Combine(dir, trackRepresentation.InitFragmentPath);
+        writer.Write(File.ReadAllBytes(fragmentPath));
 
-            foreach (var path in trackRepresentation.FragmentsPaths)
-            {
-                fragmentPath = Path.Combine(dir, path);
-                if (!File.Exists(fragmentPath))
-                    break;
-                writer.Write(File.ReadAllBytes(fragmentPath));
-            }
+        foreach (var path in trackRepresentation.FragmentsPaths)
+        {
+            fragmentPath = Path.Combine(dir, path);
+            if (!File.Exists(fragmentPath))
+                break;
+            writer.Write(File.ReadAllBytes(fragmentPath));
         }
 
         return outputFilePath;
@@ -371,35 +360,35 @@ public class MpdDownloader : IDisposable
 
     private Task<string> DownloadFragment(string fragmentUrl)
     {
-        using (var client = new WebClient())
-        {
-            var url = IsAbsoluteUrl(fragmentUrl)
-                ? new Uri(fragmentUrl)
-                : _mpd.Value.BaseURL != null
+        var url = IsAbsoluteUrl(fragmentUrl)
+            ? new Uri(fragmentUrl)
+            : _mpd.Value.BaseURL is not null
                 ? new Uri(_mpd.Value.BaseURL + fragmentUrl)
                 : new Uri(_mpdUrl, fragmentUrl);
 
-            string destPath = Path.Combine(_destinationDir, GetFileNameForFragmentUrl(fragmentUrl));
+        string destPath = Path.Combine(_destinationDir, GetFileNameForFragmentUrl(fragmentUrl));
 
-            int i = 0;
-            while (File.Exists(destPath))
-            {
-                i++;
-                destPath = Path.Combine(Path.GetDirectoryName(destPath)!, Path.ChangeExtension((Path.GetFileNameWithoutExtension(destPath) + "_" + i), Path.GetExtension(destPath)));
-            }
-
-            // create directory recursive
-            Directory.CreateDirectory(Path.GetDirectoryName(destPath)!);
-
-            return Task.Factory.StartNew(() =>
-            {
-                client.DownloadFile(url, destPath);
-                return destPath;
-            });
+        int i = 0;
+        while (File.Exists(destPath))
+        {
+            i++;
+            destPath = Path.Combine(Path.GetDirectoryName(destPath)!, Path.ChangeExtension((Path.GetFileNameWithoutExtension(destPath) + "_" + i), Path.GetExtension(destPath)));
         }
+
+        // create directory recursive
+        Directory.CreateDirectory(Path.GetDirectoryName(destPath)!);
+
+        return Task.Factory.StartNew(async () =>
+        {
+            using var client = new HttpClient();
+            using var data = await client.GetStreamAsync(url);
+            await using var fs = File.Create(destPath);
+            await data.CopyToAsync(fs);
+            return destPath;
+        }).Unwrap();
     }
 
-    private bool DownloadTaskSucceded(Task<string> task)
+    private static bool DownloadTaskSucceded(Task<string> task)
     {
         return task.IsCompleted && !task.IsFaulted && !string.IsNullOrWhiteSpace(task.Result);
     }
@@ -407,21 +396,21 @@ public class MpdDownloader : IDisposable
     private string GetMpdFileName()
     {
         string mpdFileName = _mpdUrl.AbsolutePath;
-        if (mpdFileName.Contains("/"))
-            mpdFileName = mpdFileName.Substring(mpdFileName.LastIndexOf("/") + 1);
+        if (mpdFileName.Contains('/'))
+            mpdFileName = mpdFileName[(mpdFileName.LastIndexOf('/') + 1)..];
         string mpdPath = Path.Combine(_destinationDir, mpdFileName);
 
         return mpdPath;
     }
 
-    private MediaPresentationDescription DownloadMpd()
+    private Task<MediaPresentationDescription> DownloadMpdAsync()
     {
         if (!Directory.Exists(_destinationDir))
             Directory.CreateDirectory(_destinationDir);
         else
             Directory.GetFiles(_destinationDir).ToList().ForEach(f => File.Delete(f));
 
-        return MediaPresentationDescription.FromUrl(_mpdUrl, _mpdFileName.Value);
+        return MediaPresentationDescription.FromUrlAsync(_mpdUrl, _mpdFileName.Value);
     }
 
     private MpdWalker CreateMpdWalker()
@@ -429,19 +418,19 @@ public class MpdDownloader : IDisposable
         return new MpdWalker(_mpd.Value);
     }
 
-    private string GetFileNameForFragmentUrl(string url)
+    private static string GetFileNameForFragmentUrl(string url)
     {
         string fileName = url;
         if (IsAbsoluteUrl(url))
         {
             fileName = new Uri(url).AbsolutePath;
-            if (fileName.Contains("/"))
-                fileName = fileName.Substring(fileName.LastIndexOf("/") + 1);
+            if (fileName.Contains('/'))
+                fileName = fileName[(fileName.LastIndexOf('/') + 1)..];
         }
 
-        int queryStartIndex = fileName.IndexOf("?");
+        int queryStartIndex = fileName.IndexOf('?');
         if (queryStartIndex >= 0)
-            fileName = fileName.Substring(0, queryStartIndex);
+            fileName = fileName[..queryStartIndex];
 
         string extension = Path.GetExtension(fileName);
         if (string.IsNullOrWhiteSpace(extension))
@@ -452,7 +441,7 @@ public class MpdDownloader : IDisposable
         return fileName;
     }
 
-    private string ReplaceIllegalCharsInFileName(string fileName)
+    private static string ReplaceIllegalCharsInFileName(string fileName)
     {
         var illegalChars = new[] { '/', '\\', ':', '*', '?', '"', '<', '>', '|' };
         foreach (var ch in illegalChars)
@@ -462,13 +451,14 @@ public class MpdDownloader : IDisposable
         return fileName;
     }
 
-    private bool IsAbsoluteUrl(string url)
+    private static bool IsAbsoluteUrl(string url)
     {
-        return Uri.TryCreate(url, UriKind.Absolute, out var result);
+        return Uri.TryCreate(url, UriKind.Absolute, result: out _);
     }
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         if (_mpd.IsValueCreated)
             _mpd.Value.Dispose();
     }
