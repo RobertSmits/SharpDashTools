@@ -7,5 +7,5 @@ public class MpdInitialization : MpdElement
     internal MpdInitialization(XElement node)
         : base(node) { }
 
-    public string SourceUrl => _helper.ParseMandatoryString("sourceURL");
+    public string SourceUrl => _node.ParseMandatoryString("sourceURL");
 }

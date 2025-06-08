@@ -18,15 +18,15 @@ public class MpdRepresentation : MpdElement
         _baseURL = new Lazy<string?>(ParseBaseURL);
     }
 
-    public string? Id => _helper.ParseOptionalString("id");
+    public string? Id => _node.ParseOptionalString("id");
 
-    public uint Bandwidth => _helper.ParseMandatoryUint("bandwidth");
+    public uint Bandwidth => _node.ParseMandatoryUint("bandwidth");
 
-    public uint? QualityRanking => _helper.ParseOptionalUint("qualityRanking");
+    public uint? QualityRanking => _node.ParseOptionalUint("qualityRanking");
 
-    public string? DependencyId => _helper.ParseOptionalString("dependencyId");
+    public string? DependencyId => _node.ParseOptionalString("dependencyId");
 
-    public string? MediaStreamStructureId => _helper.ParseOptionalString("mediaStreamStructureId");
+    public string? MediaStreamStructureId => _node.ParseOptionalString("mediaStreamStructureId");
 
     public MpdSegmentList? SegmentList => _segmentList.Value;
 

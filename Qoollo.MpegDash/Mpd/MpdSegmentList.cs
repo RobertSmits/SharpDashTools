@@ -14,9 +14,9 @@ public class MpdSegmentList : MpdElement
         _segmentUrls = new Lazy<IEnumerable<MpdSegmentUrl>>(ParseSegmentUrls);
     }
 
-    public uint? Timescale => _helper.ParseOptionalUint("timescale");
+    public uint? Timescale => _node.ParseOptionalUint("timescale");
 
-    public uint? Duration => _helper.ParseOptionalUint("duration");
+    public uint? Duration => _node.ParseOptionalUint("duration");
 
     public MpdInitialization? Initialization => _initialization.Value;
 

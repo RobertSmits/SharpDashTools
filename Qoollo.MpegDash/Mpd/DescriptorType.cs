@@ -19,7 +19,7 @@ public class DescriptorType : MpdElement
     /// or very close to that date, to avoid problems when domain
     /// names change ownership.
     /// </summary>
-    public string SchemeIdUri => _helper.ParseMandatoryString("schemeIdUri");
+    public string SchemeIdUri => _node.ParseMandatoryString("schemeIdUri");
 
     /// <summary>
     /// Optional
@@ -28,7 +28,7 @@ public class DescriptorType : MpdElement
     /// space and semantics must be defined by the owners of the
     /// scheme identified in the @schemeIdUri attribute.
     /// </summary>
-    public string? Value => _helper.ParseOptionalString("value");
+    public string? Value => _node.ParseOptionalString("value");
 
     /// <summary>
     /// Optional
@@ -38,5 +38,5 @@ public class DescriptorType : MpdElement
     /// the processing of one of the descriptors with an identical
     /// value is sufficient.
     /// </summary>
-    public string? Id => _helper.ParseOptionalString("id");
+    public string? Id => _node.ParseOptionalString("id");
 }

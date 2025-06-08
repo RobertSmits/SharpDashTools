@@ -7,7 +7,6 @@ public class MediaPresentationDescription : IDisposable
     private readonly Stream _stream;
     private readonly bool _streamIsOwned;
     private readonly Lazy<XElement> _mpdTag;
-    private readonly Lazy<XmlAttributeParseHelper> _helper;
     private readonly Lazy<DateTimeOffset> _fetchTime;
     private readonly Lazy<string?> _baseURL;
     private readonly Lazy<IEnumerable<MpdPeriod>> _periods;
@@ -30,7 +29,6 @@ public class MediaPresentationDescription : IDisposable
             var v = _mpdTag.Value;
             return DateTimeOffset.Now;
         });
-        _helper = new Lazy<XmlAttributeParseHelper>(() => new XmlAttributeParseHelper(_mpdTag.Value));
         _periods = new Lazy<IEnumerable<MpdPeriod>>(ParsePeriods);
     }
 
@@ -54,28 +52,28 @@ public class MediaPresentationDescription : IDisposable
 
     public string Type => _mpdTag.Value.Attribute("type")?.Value ?? "static";
 
-    public string? Profiles => _helper.Value.ParseOptionalString("profiles");
+    public string? Profiles => _mpdTag.Value.ParseOptionalString("profiles");
 
     public DateTimeOffset? AvailabilityStartTime =>
-        _helper.Value.ParseDateTimeOffset("availabilityStartTime", Type == "dynamic");
+        _mpdTag.Value.ParseDateTimeOffset("availabilityStartTime", Type == "dynamic");
 
-    public DateTimeOffset? PublishTime => _helper.Value.ParseOptionalDateTimeOffset("publishTime");
+    public DateTimeOffset? PublishTime => _mpdTag.Value.ParseOptionalDateTimeOffset("publishTime");
 
-    public DateTimeOffset? AvailabilityEndTime => _helper.Value.ParseOptionalDateTimeOffset("availabilityEndTime");
+    public DateTimeOffset? AvailabilityEndTime => _mpdTag.Value.ParseOptionalDateTimeOffset("availabilityEndTime");
 
-    public TimeSpan? MediaPresentationDuration => _helper.Value.ParseOptionalTimeSpan("mediaPresentationDuration");
+    public TimeSpan? MediaPresentationDuration => _mpdTag.Value.ParseOptionalTimeSpan("mediaPresentationDuration");
 
-    public TimeSpan? MinimumUpdatePeriod => _helper.Value.ParseOptionalTimeSpan("minimumUpdatePeriod");
+    public TimeSpan? MinimumUpdatePeriod => _mpdTag.Value.ParseOptionalTimeSpan("minimumUpdatePeriod");
 
-    public TimeSpan MinBufferTime => _helper.Value.ParseMandatoryTimeSpan("minBufferTime");
+    public TimeSpan MinBufferTime => _mpdTag.Value.ParseMandatoryTimeSpan("minBufferTime");
 
-    public TimeSpan? TimeShiftBufferDepth => _helper.Value.ParseOptionalTimeSpan("timeShiftBufferDepth");
+    public TimeSpan? TimeShiftBufferDepth => _mpdTag.Value.ParseOptionalTimeSpan("timeShiftBufferDepth");
 
-    public TimeSpan? SuggestedPresentationDelay => _helper.Value.ParseOptionalTimeSpan("suggestedPresentationDelay");
+    public TimeSpan? SuggestedPresentationDelay => _mpdTag.Value.ParseOptionalTimeSpan("suggestedPresentationDelay");
 
-    public TimeSpan? MaxSegmentDuration => _helper.Value.ParseOptionalTimeSpan("maxSegmentDuration");
+    public TimeSpan? MaxSegmentDuration => _mpdTag.Value.ParseOptionalTimeSpan("maxSegmentDuration");
 
-    public TimeSpan? MaxSubsegmentDuration => _helper.Value.ParseOptionalTimeSpan("maxSubsegmentDuration");
+    public TimeSpan? MaxSubsegmentDuration => _mpdTag.Value.ParseOptionalTimeSpan("maxSubsegmentDuration");
 
     public string? BaseURL => _baseURL.Value;
 

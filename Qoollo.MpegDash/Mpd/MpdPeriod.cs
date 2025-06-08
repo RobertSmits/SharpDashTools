@@ -22,13 +22,13 @@ public class MpdPeriod : MpdElement
         _adaptationSets = new Lazy<IEnumerable<MpdAdaptationSet>>(ParseAdaptationSets);
     }
 
-    public string? Id => _helper.ParseOptionalString("id");
+    public string? Id => _node.ParseOptionalString("id");
 
-    public TimeSpan? Start => _helper.ParseOptionalTimeSpan("start");
+    public TimeSpan? Start => _node.ParseOptionalTimeSpan("start");
 
-    public TimeSpan? Duration => _helper.ParseOptionalTimeSpan("duration");
+    public TimeSpan? Duration => _node.ParseOptionalTimeSpan("duration");
 
-    public bool BitstreamSwitching => _helper.ParseOptionalBool("bitstreamSwitching", false);
+    public bool BitstreamSwitching => _node.ParseOptionalBool("bitstreamSwitching", false);
 
     /// <summary>
     /// 0...N

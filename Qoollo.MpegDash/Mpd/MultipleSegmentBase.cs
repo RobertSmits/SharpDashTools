@@ -10,7 +10,7 @@ public abstract class MultipleSegmentBase : SegmentBase
     internal MultipleSegmentBase(XElement node)
         : base(node) { }
 
-    public uint? Duration => _helper.ParseOptionalUint("duration");
+    public uint? Duration => _node.ParseOptionalUint("duration");
 
-    public uint? StartNumber => _helper.ParseOptionalUint("startNumber");
+    public uint? StartNumber => _node.ParseOptionalUint("startNumber");
 }

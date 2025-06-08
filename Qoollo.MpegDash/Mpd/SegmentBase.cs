@@ -7,15 +7,15 @@ public class SegmentBase : MpdElement
     internal SegmentBase(XElement node)
         : base(node) { }
 
-    public uint? Timescale => _helper.ParseOptionalUint("timescale");
+    public uint? Timescale => _node.ParseOptionalUint("timescale");
 
-    public ulong? PresentationTimeOffset => _helper.ParseOptionalUlong("presentationTimeOffset");
+    public ulong? PresentationTimeOffset => _node.ParseOptionalUlong("presentationTimeOffset");
 
-    public string IndexRange => _helper.ParseMandatoryString("indexRange");
+    public string IndexRange => _node.ParseMandatoryString("indexRange");
 
-    public bool IndexRangeExact => _helper.ParseOptionalBool("indexRangeExact", false);
+    public bool IndexRangeExact => _node.ParseOptionalBool("indexRangeExact", false);
 
-    public double? AvailabilityTimeOffset => _helper.ParseOptionalDouble("availabilityTimeOffset");
+    public double? AvailabilityTimeOffset => _node.ParseOptionalDouble("availabilityTimeOffset");
 
-    public bool AvailabilityTimeComplete => _helper.ParseOptionalBool("availabilityTimeComplete", false);
+    public bool AvailabilityTimeComplete => _node.ParseOptionalBool("availabilityTimeComplete", false);
 }

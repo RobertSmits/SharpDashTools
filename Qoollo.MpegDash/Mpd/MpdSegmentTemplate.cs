@@ -20,7 +20,7 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     ///
     /// Specifies the template to create the Media Segment List.
     /// </summary>
-    public string? Media => _helper.ParseOptionalString("media");
+    public string? Media => _node.ParseOptionalString("media");
 
     /// <summary>
     /// Optional
@@ -29,7 +29,7 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     /// If neither the $Number$ nor the $Time$ identifier is included,
     /// this provides the URL to a Representation Index.
     /// </summary>
-    public string? Index => _helper.ParseOptionalString("index");
+    public string? Index => _node.ParseOptionalString("index");
 
     /// <summary>
     /// Optional
@@ -37,7 +37,7 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     /// Specifies the template to create the Initialization Segment.
     /// Neither $Number$ nor the $Time$ identifier shall be included.
     /// </summary>
-    public string? Initialization => _helper.ParseOptionalString("initialization");
+    public string? Initialization => _node.ParseOptionalString("initialization");
 
     /// <summary>
     /// Optional
@@ -45,7 +45,7 @@ public class MpdSegmentTemplate : MultipleSegmentBase
     /// Specifies the template to create the Bitstream Switching Segment.
     /// Neither $Number$ nor the $Time$ identifier shall be included.
     /// </summary>
-    public bool BitstreamSwitching => _helper.ParseOptionalBool("bitstreamSwitching", false);
+    public bool BitstreamSwitching => _node.ParseOptionalBool("bitstreamSwitching", false);
 
     public SegmentTimeline? SegmentTimeline => _segmentTimeline;
 

@@ -22,40 +22,40 @@ public class MpdAdaptationSet : MpdElement
         _contentProtections = new Lazy<IEnumerable<MpdContentProtection>>(ParseContentProtections);
     }
 
-    public uint? Id => _helper.ParseOptionalUint("id");
+    public uint? Id => _node.ParseOptionalUint("id");
 
-    public uint? Group => _helper.ParseOptionalUint("group");
+    public uint? Group => _node.ParseOptionalUint("group");
 
     public string? Lang => _node.Attribute("lang")?.Value;
 
-    public string? ContentType => _helper.ParseOptionalString("contentType") ?? _helper.ParseOptionalString("mimeType");
+    public string? ContentType => _node.ParseOptionalString("contentType") ?? _node.ParseOptionalString("mimeType");
 
-    public AspectRatio? Par => _helper.ParseOptionalAspectRatio("par");
+    public AspectRatio? Par => _node.ParseOptionalAspectRatio("par");
 
-    public uint? MinBandwidth => _helper.ParseOptionalUint("minBandwidth");
+    public uint? MinBandwidth => _node.ParseOptionalUint("minBandwidth");
 
-    public uint? MaxBandwidth => _helper.ParseOptionalUint("maxBandwidth");
+    public uint? MaxBandwidth => _node.ParseOptionalUint("maxBandwidth");
 
-    public uint? MinWidth => _helper.ParseOptionalUint("minWidth");
+    public uint? MinWidth => _node.ParseOptionalUint("minWidth");
 
-    public uint? MaxWidth => _helper.ParseOptionalUint("maxWidth");
+    public uint? MaxWidth => _node.ParseOptionalUint("maxWidth");
 
-    public uint? MinHeight => _helper.ParseOptionalUint("minHeight");
+    public uint? MinHeight => _node.ParseOptionalUint("minHeight");
 
-    public uint? MaxHeight => _helper.ParseOptionalUint("maxHeight");
+    public uint? MaxHeight => _node.ParseOptionalUint("maxHeight");
 
-    public FrameRate? MinFrameRate => _helper.ParseOptionalFrameRate("minFrameRate");
+    public FrameRate? MinFrameRate => _node.ParseOptionalFrameRate("minFrameRate");
 
-    public FrameRate? MaxFrameRate => _helper.ParseOptionalFrameRate("maxFrameRate");
+    public FrameRate? MaxFrameRate => _node.ParseOptionalFrameRate("maxFrameRate");
 
-    public bool SegmentAlignment => _helper.ParseOptionalBool("segmentAlignment", false);
+    public bool SegmentAlignment => _node.ParseOptionalBool("segmentAlignment", false);
 
-    public bool BitstreamSwitching => _helper.ParseOptionalBool("bitstreamSwitching", false);
+    public bool BitstreamSwitching => _node.ParseOptionalBool("bitstreamSwitching", false);
 
-    public bool SubsegmentAlignment => _helper.ParseOptionalBool("subsegmentAlignment", false);
+    public bool SubsegmentAlignment => _node.ParseOptionalBool("subsegmentAlignment", false);
 
     public uint? SubsegmentStartsWithSAP =>
-        _helper.ParseOptionalUint("subsegmentStartsWithSAP") ?? _helper.ParseOptionalUint("startWithSAP");
+        _node.ParseOptionalUint("subsegmentStartsWithSAP") ?? _node.ParseOptionalUint("startWithSAP");
 
     public MpdValue? AudioChannelConfiguration => _audioChannelConfiguration.Value;
 

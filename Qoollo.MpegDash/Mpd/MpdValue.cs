@@ -7,7 +7,7 @@ public class MpdValue : MpdElement
     internal MpdValue(XElement node)
         : base(node) { }
 
-    public string SchemeIdUri => _helper.ParseMandatoryString("schemeIdUri");
+    public string SchemeIdUri => _node.ParseMandatoryString("schemeIdUri");
 
-    public string Value => _helper.ParseMandatoryString("value");
+    public string Value => _node.ParseMandatoryString("value");
 }

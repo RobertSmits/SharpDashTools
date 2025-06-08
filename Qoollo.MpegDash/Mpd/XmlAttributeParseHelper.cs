@@ -4,123 +4,132 @@ using System.Xml.Linq;
 
 namespace Qoollo.MpegDash.Mpd;
 
-public class XmlAttributeParseHelper
+public static class XmlAttributeParseExtensions
 {
-    private readonly XElement _node;
-
-    public XmlAttributeParseHelper(XElement node)
+    public static string ParseMandatoryString(this XElement node, string attributeName)
     {
-        _node = node;
-    }
-
-    public string ParseMandatoryString(string attributeName)
-    {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null
-            ? throw new Exception($"Attribute \"{attributeName}\" not found on element {_node}")
+            ? throw new Exception($"Attribute \"{attributeName}\" not found on element {node}")
             : attr.Value;
     }
 
-    public string? ParseOptionalString(string attributeName)
+    public static string? ParseOptionalString(this XElement node, string attributeName)
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr?.Value;
     }
 
-    public DateTimeOffset? ParseDateTimeOffset(string attributeName, bool mandatoryCondition)
+    public static DateTimeOffset? ParseDateTimeOffset(this XElement node, string attributeName, bool mandatoryCondition)
     {
-        if (!mandatoryCondition && _node.Attribute(attributeName) is null)
+        if (!mandatoryCondition && node.Attribute(attributeName) is null)
             throw new Exception($"MPD attribute @{attributeName} should be present.");
-        return ParseOptionalDateTimeOffset(attributeName);
+        return node.ParseOptionalDateTimeOffset(attributeName);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
-    public DateTimeOffset? ParseOptionalDateTimeOffset(string attributeName, DateTimeOffset? defaultValue = null)
+    public static DateTimeOffset? ParseOptionalDateTimeOffset(
+        this XElement node,
+        string attributeName,
+        DateTimeOffset? defaultValue = null
+    )
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null ? defaultValue : DateTimeOffset.Parse(attr.Value);
     }
 
-    public TimeSpan ParseMandatoryTimeSpan(string attributeName)
+    public static TimeSpan ParseMandatoryTimeSpan(this XElement node, string attributeName)
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null
             ? throw new Exception($"MPD attribute @{attributeName} should be present.")
             : XmlConvert.ToTimeSpan(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
-    public TimeSpan? ParseOptionalTimeSpan(string attributeName, TimeSpan? defaultValue = null)
+    public static TimeSpan? ParseOptionalTimeSpan(
+        this XElement node,
+        string attributeName,
+        TimeSpan? defaultValue = null
+    )
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null ? defaultValue : XmlConvert.ToTimeSpan(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
-    public bool ParseOptionalBool(string attributeName, bool defaultValue)
+    public static bool ParseOptionalBool(this XElement node, string attributeName, bool defaultValue)
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null ? defaultValue : bool.Parse(attr.Value);
     }
 
-    public uint ParseMandatoryUint(string attributeName)
+    public static uint ParseMandatoryUint(this XElement node, string attributeName)
     {
-        var attr = ParseMandatoryString(attributeName);
+        var attr = node.ParseMandatoryString(attributeName);
         return uint.Parse(attr);
     }
 
-    public uint? ParseOptionalUint(string attributeName, uint? defaultValue = null)
+    public static uint? ParseOptionalUint(this XElement node, string attributeName, uint? defaultValue = null)
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null ? defaultValue : uint.Parse(attr.Value);
     }
 
-    public int ParseMandatoryInt(string attributeName)
+    public static int ParseMandatoryInt(this XElement node, string attributeName)
     {
-        var attr = ParseMandatoryString(attributeName);
+        var attr = node.ParseMandatoryString(attributeName);
         return int.Parse(attr);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
-    public int? ParseOptionalInt(string attributeName, int? defaultValue = null)
+    public static int? ParseOptionalInt(this XElement node, string attributeName, int? defaultValue = null)
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null ? defaultValue : int.Parse(attr.Value);
     }
 
-    public ulong ParseMandatoryUlong(string attributeName)
+    public static ulong ParseMandatoryUlong(this XElement node, string attributeName)
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null
-            ? throw new Exception($"AtStribute \"{attributeName}\" not found on element {_node}")
+            ? throw new Exception($"Attribute \"{attributeName}\" not found on element {node}")
             : ulong.Parse(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
-    public ulong? ParseOptionalUlong(string attributeName, ulong? defaultValue = null)
+    public static ulong? ParseOptionalUlong(this XElement node, string attributeName, ulong? defaultValue = null)
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null ? defaultValue : ulong.Parse(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
-    public double? ParseOptionalDouble(string attributeName, double? defaultValue = null)
+    public static double? ParseOptionalDouble(this XElement node, string attributeName, double? defaultValue = null)
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null ? defaultValue : double.Parse(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
-    public AspectRatio? ParseOptionalAspectRatio(string attributeName, AspectRatio? defaultValue = null)
+    public static AspectRatio? ParseOptionalAspectRatio(
+        this XElement node,
+        string attributeName,
+        AspectRatio? defaultValue = null
+    )
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null ? defaultValue : new AspectRatio(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
-    public FrameRate? ParseOptionalFrameRate(string attributeName, FrameRate? defaultValue = null)
+    public static FrameRate? ParseOptionalFrameRate(
+        this XElement node,
+        string attributeName,
+        FrameRate? defaultValue = null
+    )
     {
-        var attr = _node.Attribute(attributeName);
+        var attr = node.Attribute(attributeName);
         return attr is null ? defaultValue : new FrameRate(attr.Value);
     }
 }
