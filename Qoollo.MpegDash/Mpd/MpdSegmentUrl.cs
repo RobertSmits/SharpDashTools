@@ -5,9 +5,7 @@ namespace Qoollo.MpegDash.Mpd;
 public class MpdSegmentUrl : MpdElement
 {
     internal MpdSegmentUrl(XElement node)
-        : base(node)
-    {
-    }
+        : base(node) { }
 
     public int Index => _helper.ParseMandatoryInt("index");
 

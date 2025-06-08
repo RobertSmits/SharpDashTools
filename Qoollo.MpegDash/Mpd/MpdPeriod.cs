@@ -40,9 +40,7 @@ public class MpdPeriod : MpdElement
 
     private IEnumerable<BaseUrl> ParseBaseUrls()
     {
-        return _node.Elements()
-            .Where(n => n.Name.LocalName == "BaseURL")
-            .Select(n => new BaseUrl(n));
+        return _node.Elements().Where(n => n.Name.LocalName == "BaseURL").Select(n => new BaseUrl(n));
     }
 
     /// <summary>
@@ -57,7 +55,8 @@ public class MpdPeriod : MpdElement
 
     private SegmentBase? ParseSegmentBase()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "SegmentBase")
             .Select(n => new SegmentBase(n))
             .FirstOrDefault();
@@ -75,7 +74,8 @@ public class MpdPeriod : MpdElement
 
     private MpdSegmentList? ParseSegmentList()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "SegmentList")
             .Select(n => new MpdSegmentList(n))
             .FirstOrDefault();
@@ -93,7 +93,8 @@ public class MpdPeriod : MpdElement
 
     private MpdSegmentTemplate? ParseSegmentTemplate()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "SegmentTemplate")
             .Select(n => new MpdSegmentTemplate(n))
             .FirstOrDefault();
@@ -108,7 +109,8 @@ public class MpdPeriod : MpdElement
 
     private AssetIdentifier? ParseAssetIdentifier()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "AssetIdentifier")
             .Select(n => new AssetIdentifier(n))
             .FirstOrDefault();
@@ -118,8 +120,6 @@ public class MpdPeriod : MpdElement
 
     private IEnumerable<MpdAdaptationSet> ParseAdaptationSets()
     {
-        return _node.Elements()
-            .Where(n => n.Name.LocalName == "AdaptationSet")
-            .Select(n => new MpdAdaptationSet(n));
+        return _node.Elements().Where(n => n.Name.LocalName == "AdaptationSet").Select(n => new MpdAdaptationSet(n));
     }
 }

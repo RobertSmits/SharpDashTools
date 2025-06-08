@@ -5,9 +5,7 @@ namespace Qoollo.MpegDash.Mpd;
 public class SegmentBase : MpdElement
 {
     internal SegmentBase(XElement node)
-        : base(node)
-    {
-    }
+        : base(node) { }
 
     public uint? Timescale => _helper.ParseOptionalUint("timescale");
 

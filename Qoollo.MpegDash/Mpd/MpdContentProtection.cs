@@ -5,9 +5,7 @@ namespace Qoollo.MpegDash.Mpd;
 public class MpdContentProtection : MpdElement
 {
     public MpdContentProtection(XElement node)
-        : base(node)
-    {
-    }
+        : base(node) { }
 
     public string SchemeIdUri => _helper.ParseMandatoryString("schemeIdUri");
 

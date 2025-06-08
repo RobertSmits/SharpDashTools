@@ -8,9 +8,7 @@ namespace Qoollo.MpegDash.Mpd;
 public abstract class MultipleSegmentBase : SegmentBase
 {
     internal MultipleSegmentBase(XElement node)
-        : base(node)
-    {
-    }
+        : base(node) { }
 
     public uint? Duration => _helper.ParseOptionalUint("duration");
 

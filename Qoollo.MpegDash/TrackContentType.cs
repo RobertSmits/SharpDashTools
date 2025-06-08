@@ -4,5 +4,5 @@ public enum TrackContentType
 {
     Video,
     Audio,
-    Text
+    Text,
 }

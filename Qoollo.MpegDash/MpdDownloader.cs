@@ -33,7 +33,9 @@ public class MpdDownloader : IDisposable
 
     public Task<IEnumerable<Mp4File>> Download(TrackRepresentation trackRepresentation)
     {
-        return Task.Factory.StartNew(() => DownloadTrackRepresentation(trackRepresentation, TimeSpan.Zero, TimeSpan.MaxValue));
+        return Task.Factory.StartNew(() =>
+            DownloadTrackRepresentation(trackRepresentation, TimeSpan.Zero, TimeSpan.MaxValue)
+        );
     }
 
     public Task<IEnumerable<Mp4File>> Download(TrackRepresentation trackRepresentation, TimeSpan from, TimeSpan to)
@@ -43,7 +45,8 @@ public class MpdDownloader : IDisposable
 
     public FileInfo CombineChunksFast(IEnumerable<Mp4File> chunks, Action<string> ffmpegRunner)
     {
-        if (!chunks.Any()) throw new ArgumentException("Chunks must not be empty.", nameof(chunks));
+        if (!chunks.Any())
+            throw new ArgumentException("Chunks must not be empty.", nameof(chunks));
         var firstChunkPath = chunks.First().Path;
         var dir = Path.GetDirectoryName(firstChunkPath) ?? string.Empty;
         var concatFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmssfffffff}_concat.mp4", DateTime.Now));
@@ -61,7 +64,13 @@ public class MpdDownloader : IDisposable
 
         ConcatFiles(files.Select(f => f.Path), concatFile);
 
-        ffmpegRunner(string.Format("-i \"concat:{0}\" -c copy {1}", ConvertPathForFfmpeg(concatFile), ConvertPathForFfmpeg(outFile)));
+        ffmpegRunner(
+            string.Format(
+                "-i \"concat:{0}\" -c copy {1}",
+                ConvertPathForFfmpeg(concatFile),
+                ConvertPathForFfmpeg(outFile)
+            )
+        );
 
         return new FileInfo(outFile);
     }
@@ -76,9 +85,14 @@ public class MpdDownloader : IDisposable
         }
     }
 
-    public FileInfo CombineChunksFastOld(IEnumerable<Mp4File> chunks, Action<string> ffmpegRunner, int maxCmdLength = 32672)
+    public FileInfo CombineChunksFastOld(
+        IEnumerable<Mp4File> chunks,
+        Action<string> ffmpegRunner,
+        int maxCmdLength = 32672
+    )
     {
-        if (!chunks.Any()) throw new ArgumentException("Chunks must not be empty.", nameof(chunks));
+        if (!chunks.Any())
+            throw new ArgumentException("Chunks must not be empty.", nameof(chunks));
         var firstChunkPath = chunks.First().Path;
         var dir = Path.GetDirectoryName(firstChunkPath) ?? string.Empty;
         string outputFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmssfffffff}_combined.mp4", DateTime.Now));
@@ -123,7 +137,8 @@ public class MpdDownloader : IDisposable
 
     public FileInfo CombineChunks(IEnumerable<Mp4File> chunks, Action<string> ffmpegRunner)
     {
-        if (!chunks.Any()) throw new ArgumentException("Chunks must not be empty.", nameof(chunks));
+        if (!chunks.Any())
+            throw new ArgumentException("Chunks must not be empty.", nameof(chunks));
         var firstChunkPath = chunks.First().Path;
         var dir = Path.GetDirectoryName(firstChunkPath) ?? string.Empty;
 
@@ -132,24 +147,33 @@ public class MpdDownloader : IDisposable
         string tempFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmss}_temp.mp4", DateTime.Now));
         foreach (var c in chunks)
         {
-            ffmpegRunner(string.Format(
-                @"-i ""{0}"" -filter:v ""setpts=PTS-STARTPTS"" -f mp4 ""{1}""",
-                ConvertPathForFfmpeg(c.Path),
-                ConvertPathForFfmpeg(tempFile)));
+            ffmpegRunner(
+                string.Format(
+                    @"-i ""{0}"" -filter:v ""setpts=PTS-STARTPTS"" -f mp4 ""{1}""",
+                    ConvertPathForFfmpeg(c.Path),
+                    ConvertPathForFfmpeg(tempFile)
+                )
+            );
             File.Delete(c.Path);
             File.Move(tempFile, c.Path);
         }
         File.Delete(tempFile);
 
         string filesListFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmss}_list.txt", DateTime.Now));
-        File.WriteAllText(filesListFile, string.Join("", chunks.Select(c => string.Format("file '{0}'\r\n", Path.GetFileName(c.Path)))));
+        File.WriteAllText(
+            filesListFile,
+            string.Join("", chunks.Select(c => string.Format("file '{0}'\r\n", Path.GetFileName(c.Path))))
+        );
         string outFile = Path.Combine(dir, string.Format("{0:yyyyMMddHHmmss}_combined.mp4", DateTime.Now));
         if (File.Exists(outFile))
             File.Delete(outFile);
-        ffmpegRunner(string.Format(
-            @"-f concat -i ""{0}"" -c copy ""{1}""",
-            ConvertPathForFfmpeg(filesListFile),
-            ConvertPathForFfmpeg(outFile)));
+        ffmpegRunner(
+            string.Format(
+                @"-f concat -i ""{0}"" -c copy ""{1}""",
+                ConvertPathForFfmpeg(filesListFile),
+                ConvertPathForFfmpeg(outFile)
+            )
+        );
         File.Delete(filesListFile);
 
         return new FileInfo(outFile);
@@ -160,7 +184,12 @@ public class MpdDownloader : IDisposable
         return path.Replace("\\", "/");
     }
 
-    private IEnumerable<Mp4File> DownloadTrackRepresentation(TrackRepresentation trackRepresentation, TimeSpan from, TimeSpan to, int concurrency = 2)
+    private IEnumerable<Mp4File> DownloadTrackRepresentation(
+        TrackRepresentation trackRepresentation,
+        TimeSpan from,
+        TimeSpan to,
+        int concurrency = 2
+    )
     {
         string initFile;
         var files = new List<string>();
@@ -175,7 +204,8 @@ public class MpdDownloader : IDisposable
             int downloadedCount = 0;
             while (!complete)
             {
-                var tasks = trackRepresentation.GetFragmentsPaths(from, to)
+                var tasks = trackRepresentation
+                    .GetFragmentsPaths(from, to)
                     .Skip(downloadedCount)
                     .Take(concurrency)
                     .Select(p => DownloadFragment(p))
@@ -283,7 +313,13 @@ public class MpdDownloader : IDisposable
 
         return Task.Factory.ContinueWhenAll(
             tasks.ToArray(),
-            completed => CombineFragments(_mpd.Value, _mpdFileName.Value, Path.Combine(Path.GetDirectoryName(_mpdFileName.Value) ?? string.Empty, "video.mp4")));
+            completed =>
+                CombineFragments(
+                    _mpd.Value,
+                    _mpdFileName.Value,
+                    Path.Combine(Path.GetDirectoryName(_mpdFileName.Value) ?? string.Empty, "video.mp4")
+                )
+        );
     }
 
     private Task DownloadAllFragments(MpdAdaptationSet adaptationSet, MpdRepresentation representation)
@@ -325,32 +361,37 @@ public class MpdDownloader : IDisposable
             {
                 task = DownloadRepresentationFragment(adaptationSet, representation, i);
                 i++;
-            }
-            while (DownloadTaskSucceded(task));
+            } while (DownloadTaskSucceded(task));
         }
     }
 
-    private Task<string> DownloadRepresentationInitFragment(MpdAdaptationSet adaptationSet, MpdRepresentation representation)
+    private Task<string> DownloadRepresentationInitFragment(
+        MpdAdaptationSet adaptationSet,
+        MpdRepresentation representation
+    )
     {
         if (adaptationSet.SegmentTemplate?.Initialization is null || representation.Id is null)
             throw new InvalidOperationException("SegmentTemplate.Initialization or Representation.Id is null");
 
-        string initUrl = adaptationSet.SegmentTemplate.Initialization
-            .Replace("$RepresentationID$", representation.Id);
+        string initUrl = adaptationSet.SegmentTemplate.Initialization.Replace("$RepresentationID$", representation.Id);
         var task = DownloadFragment(initUrl);
         task.Wait(TimeSpan.FromMinutes(5));
 
         return task;
     }
 
-    private Task<string> DownloadRepresentationFragment(MpdAdaptationSet adaptationSet, MpdRepresentation representation, int index)
+    private Task<string> DownloadRepresentationFragment(
+        MpdAdaptationSet adaptationSet,
+        MpdRepresentation representation,
+        int index
+    )
     {
         if (adaptationSet.SegmentTemplate?.Media is null || representation.Id is null)
             throw new InvalidOperationException("SegmentTemplate.Media or Representation.Id is null");
 
-        string fragmentUrl = adaptationSet.SegmentTemplate.Media
-                    .Replace("$RepresentationID$", representation.Id)
-                    .Replace("$Number$", index.ToString());
+        string fragmentUrl = adaptationSet
+            .SegmentTemplate.Media.Replace("$RepresentationID$", representation.Id)
+            .Replace("$Number$", index.ToString());
 
         var task = DownloadFragment(fragmentUrl);
         task.Wait(TimeSpan.FromMinutes(5));
@@ -360,11 +401,10 @@ public class MpdDownloader : IDisposable
 
     private Task<string> DownloadFragment(string fragmentUrl)
     {
-        var url = IsAbsoluteUrl(fragmentUrl)
-            ? new Uri(fragmentUrl)
-            : _mpd.Value.BaseURL is not null
-                ? new Uri(_mpd.Value.BaseURL + fragmentUrl)
-                : new Uri(_mpdUrl, fragmentUrl);
+        var url =
+            IsAbsoluteUrl(fragmentUrl) ? new Uri(fragmentUrl)
+            : _mpd.Value.BaseURL is not null ? new Uri(_mpd.Value.BaseURL + fragmentUrl)
+            : new Uri(_mpdUrl, fragmentUrl);
 
         string destPath = Path.Combine(_destinationDir, GetFileNameForFragmentUrl(fragmentUrl));
 
@@ -372,20 +412,28 @@ public class MpdDownloader : IDisposable
         while (File.Exists(destPath))
         {
             i++;
-            destPath = Path.Combine(Path.GetDirectoryName(destPath)!, Path.ChangeExtension((Path.GetFileNameWithoutExtension(destPath) + "_" + i), Path.GetExtension(destPath)));
+            destPath = Path.Combine(
+                Path.GetDirectoryName(destPath)!,
+                Path.ChangeExtension(
+                    (Path.GetFileNameWithoutExtension(destPath) + "_" + i),
+                    Path.GetExtension(destPath)
+                )
+            );
         }
 
         // create directory recursive
         Directory.CreateDirectory(Path.GetDirectoryName(destPath)!);
 
-        return Task.Factory.StartNew(async () =>
-        {
-            using var client = new HttpClient();
-            using var data = await client.GetStreamAsync(url);
-            await using var fs = File.Create(destPath);
-            await data.CopyToAsync(fs);
-            return destPath;
-        }).Unwrap();
+        return Task
+            .Factory.StartNew(async () =>
+            {
+                using var client = new HttpClient();
+                using var data = await client.GetStreamAsync(url);
+                await using var fs = File.Create(destPath);
+                await data.CopyToAsync(fs);
+                return destPath;
+            })
+            .Unwrap();
     }
 
     private static bool DownloadTaskSucceded(Task<string> task)

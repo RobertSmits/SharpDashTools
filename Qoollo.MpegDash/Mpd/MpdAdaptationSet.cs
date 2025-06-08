@@ -54,7 +54,8 @@ public class MpdAdaptationSet : MpdElement
 
     public bool SubsegmentAlignment => _helper.ParseOptionalBool("subsegmentAlignment", false);
 
-    public uint? SubsegmentStartsWithSAP => _helper.ParseOptionalUint("subsegmentStartsWithSAP") ?? _helper.ParseOptionalUint("startWithSAP");
+    public uint? SubsegmentStartsWithSAP =>
+        _helper.ParseOptionalUint("subsegmentStartsWithSAP") ?? _helper.ParseOptionalUint("startWithSAP");
 
     public MpdValue? AudioChannelConfiguration => _audioChannelConfiguration.Value;
 
@@ -77,7 +78,8 @@ public class MpdAdaptationSet : MpdElement
 
     private MpdValue? ParseAudioChannelConfiguration()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "AudioChannelConfiguration")
             .Select(n => new MpdValue(n))
             .FirstOrDefault();
@@ -85,7 +87,8 @@ public class MpdAdaptationSet : MpdElement
 
     private MpdValue? ParseAccessibility()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "Accessibility")
             .Select(n => new MpdValue(n))
             .FirstOrDefault();
@@ -93,15 +96,13 @@ public class MpdAdaptationSet : MpdElement
 
     private MpdValue? ParseRole()
     {
-        return _node.Elements()
-            .Where(n => n.Name.LocalName == "Role")
-            .Select(n => new MpdValue(n))
-            .FirstOrDefault();
+        return _node.Elements().Where(n => n.Name.LocalName == "Role").Select(n => new MpdValue(n)).FirstOrDefault();
     }
 
     private MpdSegmentTemplate? ParseSegmentTemplate()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "SegmentTemplate")
             .Select(n => new MpdSegmentTemplate(n))
             .FirstOrDefault();
@@ -109,14 +110,13 @@ public class MpdAdaptationSet : MpdElement
 
     private IEnumerable<MpdRepresentation> ParseRepresentations()
     {
-        return _node.Elements()
-            .Where(n => n.Name.LocalName == "Representation")
-            .Select(n => new MpdRepresentation(n));
+        return _node.Elements().Where(n => n.Name.LocalName == "Representation").Select(n => new MpdRepresentation(n));
     }
 
     private IEnumerable<MpdContentProtection> ParseContentProtections()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "ContentProtection")
             .Select(n => new MpdContentProtection(n));
     }

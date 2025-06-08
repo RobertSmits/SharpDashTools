@@ -34,15 +34,16 @@ public class TrackRepresentation
                 segmentTemplate.Initialization.Replace("$RepresentationID$", _representation.Id),
 
             // If SegmentList has Initialization and SourceUrl is available
-            _ when _representation.SegmentList?.Initialization?.SourceUrl is not null =>
-                _representation.SegmentList.Initialization.SourceUrl,
+            _ when _representation.SegmentList?.Initialization?.SourceUrl is not null => _representation
+                .SegmentList
+                .Initialization
+                .SourceUrl,
 
             // If BaseURL is available
-            _ when _representation.BaseURL is not null =>
-                _representation.BaseURL,
+            _ when _representation.BaseURL is not null => _representation.BaseURL,
 
             // If nothing matches, throw an exception
-            _ => throw new Exception("Failed to determine InitFragmentPath")
+            _ => throw new Exception("Failed to determine InitFragmentPath"),
         };
     }
 
@@ -62,8 +63,8 @@ public class TrackRepresentation
 
                     for (ulong i = 0; i <= (uint)segment.RepeatCount; i++)
                     {
-                        var segmentUrl = segmentTemplate.Media
-                            .Replace("$RepresentationID$", _representation.Id)
+                        var segmentUrl = segmentTemplate
+                            .Media.Replace("$RepresentationID$", _representation.Id)
                             .Replace("$Time$", currentTime.ToString())
                             .Replace("$Number$", currentSegment.ToString());
 
@@ -78,8 +79,8 @@ public class TrackRepresentation
                 int i = 1;
                 while (true) // ToDo break while when done. But when is done?
                 {
-                    yield return segmentTemplate.Media
-                        .Replace("$RepresentationID$", _representation.Id)
+                    yield return segmentTemplate
+                        .Media.Replace("$RepresentationID$", _representation.Id)
                         .Replace("$Number$", i.ToString());
                     i++;
                 }
@@ -119,7 +120,6 @@ public class TrackRepresentation
                     yield return segment;
                 }
             }
-
         }
         else if (_representation.SegmentList is not null && _representation.SegmentList.Duration.HasValue)
         {
@@ -128,7 +128,7 @@ public class TrackRepresentation
                 yield return new TrackRepresentationSegment
                 {
                     Path = segmentUrl.Media,
-                    Duration = TimeSpan.FromMilliseconds(_representation.SegmentList.Duration.Value)
+                    Duration = TimeSpan.FromMilliseconds(_representation.SegmentList.Duration.Value),
                 };
             }
         }
@@ -137,7 +137,9 @@ public class TrackRepresentation
             yield break;
     }
 
-    private static IEnumerable<TrackRepresentationSegment> GetSegmentsFromRepresentation(MpdRepresentation representation)
+    private static IEnumerable<TrackRepresentationSegment> GetSegmentsFromRepresentation(
+        MpdRepresentation representation
+    )
     {
         if (representation.SegmentTemplate?.Media is null || !representation.SegmentTemplate.Duration.HasValue)
             yield break;
@@ -147,10 +149,10 @@ public class TrackRepresentation
         {
             yield return new TrackRepresentationSegment
             {
-                Path = representation.SegmentTemplate.Media
-                    .Replace("$RepresentationID$", representation.Id)
+                Path = representation
+                    .SegmentTemplate.Media.Replace("$RepresentationID$", representation.Id)
                     .Replace("$Number$", i.ToString()),
-                Duration = TimeSpan.FromMilliseconds(representation.SegmentTemplate.Duration.Value)
+                Duration = TimeSpan.FromMilliseconds(representation.SegmentTemplate.Duration.Value),
             };
             i++;
         }
@@ -169,10 +171,10 @@ public class TrackRepresentation
             {
                 yield return new TrackRepresentationSegment
                 {
-                    Path = segmentTemplate.Media
-                        .Replace("$RepresentationID$", _representation.Id)
+                    Path = segmentTemplate
+                        .Media.Replace("$RepresentationID$", _representation.Id)
                         .Replace("$Number$", i.ToString()),
-                    Duration = TimeSpan.FromMilliseconds(item.Duration)
+                    Duration = TimeSpan.FromMilliseconds(item.Duration),
                 };
                 i++;
             }

@@ -51,7 +51,8 @@ public class MpdSegmentTemplate : MultipleSegmentBase
 
     private SegmentTimeline? ParseSegmentTimeline()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "SegmentTimeline")
             .Select(n => new SegmentTimeline(n))
             .FirstOrDefault();

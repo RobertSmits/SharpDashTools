@@ -38,7 +38,8 @@ public class MpdRepresentation : MpdElement
 
     private MpdSegmentList? ParseSegmentList()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "SegmentList")
             .Select(n => new MpdSegmentList(n))
             .FirstOrDefault();
@@ -46,22 +47,22 @@ public class MpdRepresentation : MpdElement
 
     private MpdSegmentTemplate? ParseSegmentTemplate()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "SegmentTemplate")
             .Select(n => new MpdSegmentTemplate(n))
             .FirstOrDefault();
     }
+
     private string? ParseBaseURL()
     {
-        return _node.Elements()
-            .Where(n => n.Name.LocalName == "BaseURL")
-            .Select(n => n.Value)
-            .FirstOrDefault();
+        return _node.Elements().Where(n => n.Name.LocalName == "BaseURL").Select(n => n.Value).FirstOrDefault();
     }
 
     private IEnumerable<MpdContentProtection> ParseContentProtections()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "ContentProtection")
             .Select(n => new MpdContentProtection(n));
     }

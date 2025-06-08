@@ -5,9 +5,7 @@ namespace Qoollo.MpegDash.Mpd;
 public class SegmentTimelineItem : MpdElement
 {
     public SegmentTimelineItem(XElement node)
-        : base(node)
-    {
-    }
+        : base(node) { }
 
     /// <summary>
     /// Optional

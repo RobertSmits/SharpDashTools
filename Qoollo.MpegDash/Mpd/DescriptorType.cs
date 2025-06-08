@@ -5,9 +5,7 @@ namespace Qoollo.MpegDash.Mpd;
 public class DescriptorType : MpdElement
 {
     public DescriptorType(XElement node)
-        : base(node)
-    {
-    }
+        : base(node) { }
 
     /// <summary>
     /// Mandatory.

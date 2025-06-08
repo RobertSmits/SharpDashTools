@@ -21,8 +21,9 @@ public class MpdWalker
             _ => throw new ArgumentException($"Unexpected TrackContentType: {type}."),
         };
 
-        return _mpd.Periods
-            .SelectMany(p => p.AdaptationSets.Where(a => a.ContentType?.Contains(typeText) == true).Select(a => new Track(a)));
+        return _mpd.Periods.SelectMany(p =>
+            p.AdaptationSets.Where(a => a.ContentType?.Contains(typeText) == true).Select(a => new Track(a))
+        );
     }
 
     public static IEnumerable<Uri> GetAllFragmentsUrls()
@@ -171,9 +172,7 @@ public class MpdWalker
 
     private static string GetPeriodId(Period period)
     {
-        return !string.IsNullOrWhiteSpace(period.Id)
-            ? period.Id
-            : Period.DEFAULT_ID;
+        return !string.IsNullOrWhiteSpace(period.Id) ? period.Id : Period.DEFAULT_ID;
     }
 
     private class Period

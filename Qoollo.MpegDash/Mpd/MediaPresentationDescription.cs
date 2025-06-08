@@ -13,14 +13,10 @@ public class MediaPresentationDescription : IDisposable
     private readonly Lazy<IEnumerable<MpdPeriod>> _periods;
 
     public MediaPresentationDescription(Stream mpdStream)
-        : this(mpdStream, false)
-    {
-    }
+        : this(mpdStream, false) { }
 
     public MediaPresentationDescription(string mpdFilePath)
-        : this(File.OpenRead(mpdFilePath), true)
-    {
-    }
+        : this(File.OpenRead(mpdFilePath), true) { }
 
     private MediaPresentationDescription(Stream mpdStream, bool streamIsOwned)
     {
@@ -29,12 +25,20 @@ public class MediaPresentationDescription : IDisposable
 
         _baseURL = new Lazy<string?>(ParseBaseURL);
         _mpdTag = new Lazy<XElement>(ReadMpdTag);
-        _fetchTime = new Lazy<DateTimeOffset>(() => { var v = _mpdTag.Value; return DateTimeOffset.Now; });
+        _fetchTime = new Lazy<DateTimeOffset>(() =>
+        {
+            var v = _mpdTag.Value;
+            return DateTimeOffset.Now;
+        });
         _helper = new Lazy<XmlAttributeParseHelper>(() => new XmlAttributeParseHelper(_mpdTag.Value));
         _periods = new Lazy<IEnumerable<MpdPeriod>>(ParsePeriods);
     }
 
-    public static async Task<MediaPresentationDescription> FromUrlAsync(Uri url, string? saveFilePath = null, CancellationToken cancellationToken = default)
+    public static async Task<MediaPresentationDescription> FromUrlAsync(
+        Uri url,
+        string? saveFilePath = null,
+        CancellationToken cancellationToken = default
+    )
     {
         saveFilePath ??= Path.GetTempFileName();
         using var client = new HttpClient();
@@ -52,7 +56,8 @@ public class MediaPresentationDescription : IDisposable
 
     public string? Profiles => _helper.Value.ParseOptionalString("profiles");
 
-    public DateTimeOffset? AvailabilityStartTime => _helper.Value.ParseDateTimeOffset("availabilityStartTime", Type == "dynamic");
+    public DateTimeOffset? AvailabilityStartTime =>
+        _helper.Value.ParseDateTimeOffset("availabilityStartTime", Type == "dynamic");
 
     public DateTimeOffset? PublishTime => _helper.Value.ParseOptionalDateTimeOffset("publishTime");
 
@@ -76,10 +81,7 @@ public class MediaPresentationDescription : IDisposable
 
     private string? ParseBaseURL()
     {
-        return _mpdTag.Value.Elements()
-            .Where(n => n.Name.LocalName == "BaseURL")
-            .Select(n => n.Value)
-            .FirstOrDefault();
+        return _mpdTag.Value.Elements().Where(n => n.Name.LocalName == "BaseURL").Select(n => n.Value).FirstOrDefault();
     }
 
     public IEnumerable<MpdPeriod> Periods => _periods.Value;
@@ -104,9 +106,7 @@ public class MediaPresentationDescription : IDisposable
 
     private IEnumerable<MpdPeriod> ParsePeriods()
     {
-        return _mpdTag.Value.Elements()
-            .Where(n => n.Name.LocalName == "Period")
-            .Select(n => new MpdPeriod(n));
+        return _mpdTag.Value.Elements().Where(n => n.Name.LocalName == "Period").Select(n => new MpdPeriod(n));
     }
 
     #region IDisposable

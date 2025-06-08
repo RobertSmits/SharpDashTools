@@ -19,9 +19,10 @@ class Program
     static void Main(string[] args)
     {
         Task.Run(async () =>
-        {
-            await MainAsync(args);
-        }).Wait();
+            {
+                await MainAsync(args);
+            })
+            .Wait();
     }
 
     static async Task MainAsync(string[] args)
@@ -33,7 +34,11 @@ class Program
         var stopwatch = Stopwatch.StartNew();
 
         var downloader = new MpdDownloader(new Uri(mpdUrl), dir);
-        var trackRepresentation = downloader.GetTracksFor(TrackContentType.Video).First().TrackRepresentations.OrderByDescending(r => r.Bandwidth).First();
+        var trackRepresentation = downloader
+            .GetTracksFor(TrackContentType.Video)
+            .First()
+            .TrackRepresentations.OrderByDescending(r => r.Bandwidth)
+            .First();
         var prepareTime = stopwatch.Elapsed;
 
         var chunks =
@@ -66,7 +71,7 @@ class Program
         return;
 
         string mpdFilePath = //@"C:\Users\Alexander\AppData\Local\Temp\note_5_video_5_source_2-index_00000\manifest.mpd";
-            await DownloadMpdStreams(mpdUrl, dir);
+        await DownloadMpdStreams(mpdUrl, dir);
         await ConcatStreams(mpdFilePath, Path.Combine(Path.GetDirectoryName(mpdFilePath), "output.mp4"));
     }
 

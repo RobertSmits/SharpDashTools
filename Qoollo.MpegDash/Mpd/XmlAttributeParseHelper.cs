@@ -38,9 +38,7 @@ public class XmlAttributeParseHelper
     public DateTimeOffset? ParseOptionalDateTimeOffset(string attributeName, DateTimeOffset? defaultValue = null)
     {
         var attr = _node.Attribute(attributeName);
-        return attr is null
-            ? defaultValue
-            : DateTimeOffset.Parse(attr.Value);
+        return attr is null ? defaultValue : DateTimeOffset.Parse(attr.Value);
     }
 
     public TimeSpan ParseMandatoryTimeSpan(string attributeName)
@@ -55,18 +53,14 @@ public class XmlAttributeParseHelper
     public TimeSpan? ParseOptionalTimeSpan(string attributeName, TimeSpan? defaultValue = null)
     {
         var attr = _node.Attribute(attributeName);
-        return attr is null
-            ? defaultValue
-            : XmlConvert.ToTimeSpan(attr.Value);
+        return attr is null ? defaultValue : XmlConvert.ToTimeSpan(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
     public bool ParseOptionalBool(string attributeName, bool defaultValue)
     {
         var attr = _node.Attribute(attributeName);
-        return attr is null
-            ? defaultValue
-            : bool.Parse(attr.Value);
+        return attr is null ? defaultValue : bool.Parse(attr.Value);
     }
 
     public uint ParseMandatoryUint(string attributeName)
@@ -78,9 +72,7 @@ public class XmlAttributeParseHelper
     public uint? ParseOptionalUint(string attributeName, uint? defaultValue = null)
     {
         var attr = _node.Attribute(attributeName);
-        return attr is null
-            ? defaultValue
-            : uint.Parse(attr.Value);
+        return attr is null ? defaultValue : uint.Parse(attr.Value);
     }
 
     public int ParseMandatoryInt(string attributeName)
@@ -93,9 +85,7 @@ public class XmlAttributeParseHelper
     public int? ParseOptionalInt(string attributeName, int? defaultValue = null)
     {
         var attr = _node.Attribute(attributeName);
-        return attr is null
-            ? defaultValue
-            : int.Parse(attr.Value);
+        return attr is null ? defaultValue : int.Parse(attr.Value);
     }
 
     public ulong ParseMandatoryUlong(string attributeName)
@@ -110,35 +100,27 @@ public class XmlAttributeParseHelper
     public ulong? ParseOptionalUlong(string attributeName, ulong? defaultValue = null)
     {
         var attr = _node.Attribute(attributeName);
-        return attr is null
-            ? defaultValue
-            : ulong.Parse(attr.Value);
+        return attr is null ? defaultValue : ulong.Parse(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
     public double? ParseOptionalDouble(string attributeName, double? defaultValue = null)
     {
         var attr = _node.Attribute(attributeName);
-        return attr is null
-            ? defaultValue
-            : double.Parse(attr.Value);
+        return attr is null ? defaultValue : double.Parse(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
     public AspectRatio? ParseOptionalAspectRatio(string attributeName, AspectRatio? defaultValue = null)
     {
         var attr = _node.Attribute(attributeName);
-        return attr is null
-            ? defaultValue
-            : new AspectRatio(attr.Value);
+        return attr is null ? defaultValue : new AspectRatio(attr.Value);
     }
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
     public FrameRate? ParseOptionalFrameRate(string attributeName, FrameRate? defaultValue = null)
     {
         var attr = _node.Attribute(attributeName);
-        return attr is null
-            ? defaultValue
-            : new FrameRate(attr.Value);
+        return attr is null ? defaultValue : new FrameRate(attr.Value);
     }
 }

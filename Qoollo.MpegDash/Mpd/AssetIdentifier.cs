@@ -9,7 +9,5 @@ namespace Qoollo.MpegDash.Mpd;
 public class AssetIdentifier : DescriptorType
 {
     public AssetIdentifier(XElement node)
-        : base(node)
-    {
-    }
+        : base(node) { }
 }

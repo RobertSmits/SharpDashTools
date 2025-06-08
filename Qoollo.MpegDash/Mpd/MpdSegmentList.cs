@@ -24,7 +24,8 @@ public class MpdSegmentList : MpdElement
 
     private MpdInitialization? ParseInitialization()
     {
-        return _node.Elements()
+        return _node
+            .Elements()
             .Where(n => n.Name.LocalName == "Initialization")
             .Select(n => new MpdInitialization(n))
             .FirstOrDefault();
@@ -32,8 +33,6 @@ public class MpdSegmentList : MpdElement
 
     private IEnumerable<MpdSegmentUrl> ParseSegmentUrls()
     {
-        return _node.Elements()
-            .Where(n => n.Name.LocalName == "SegmentURL")
-            .Select(n => new MpdSegmentUrl(n));
+        return _node.Elements().Where(n => n.Name.LocalName == "SegmentURL").Select(n => new MpdSegmentUrl(n));
     }
 }

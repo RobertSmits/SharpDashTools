@@ -15,9 +15,7 @@ public class SegmentTimeline : MpdElement, IEnumerable<SegmentTimelineItem>
 
     private IEnumerable<SegmentTimelineItem> ParseItems()
     {
-        return _node.Elements()
-            .Where(n => n.Name.LocalName == "S")
-            .Select(n => new SegmentTimelineItem(n));
+        return _node.Elements().Where(n => n.Name.LocalName == "S").Select(n => new SegmentTimelineItem(n));
     }
 
     public IEnumerator<SegmentTimelineItem> GetEnumerator()
