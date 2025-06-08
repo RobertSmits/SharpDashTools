@@ -154,11 +154,15 @@ namespace Qoollo.MpegDash
 
         private XElement ReadMpdTag()
         {
-            using (var reader = XmlReader.Create(stream))
-            {
-                reader.ReadToFollowing("MPD");
-                return XNode.ReadFrom(reader) as XElement;
-            }
+            var doc = XDocument.Load(stream);
+            return doc.Root;
+
+            //using (var reader = XmlReader.Create(stream))
+            //{
+            //    stream.Seek(0, SeekOrigin.Begin);
+            //    reader.ReadToFollowing("MPD");
+            //    return XNode.ReadFrom(reader) as XElement;
+            //}
         }
 
         private IEnumerable<MpdPeriod> ParsePeriods()

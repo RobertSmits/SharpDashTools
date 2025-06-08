@@ -56,7 +56,7 @@ namespace Qoollo.MpegDash
         private IEnumerable<BaseUrl> ParseBaseUrls()
         {
             return node.Elements()
-                .Where(n => n.Name.LocalName == "BaseUrl")
+                .Where(n => n.Name.LocalName == "BaseURL")
                 .Select(n => new BaseUrl(n));
         }
 

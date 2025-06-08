@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -58,13 +58,36 @@ namespace Qoollo.MpegDash
             var segmentTemplate = adaptationSet.SegmentTemplate ?? representation.SegmentTemplate;
             if (segmentTemplate != null)
             {
-                int i = 1;
-                while (true)
+                if (segmentTemplate.SegmentTimeline != null)
                 {
-                    yield return segmentTemplate.Media
-                        .Replace("$RepresentationID$", representation.Id)
-                        .Replace("$Number$", i.ToString());
-                    i++;
+                    ulong currentTime = 0;
+                    ulong currentSegment = segmentTemplate.StartNumber ?? 0;
+
+                    foreach (var segment in segmentTemplate.SegmentTimeline)
+                    {
+                        for (ulong i = 0; i <= (uint)segment.RepeatCount; i++)
+                        {
+                            var segmentUrl = segmentTemplate.Media
+                                .Replace("$RepresentationID$", representation.Id)
+                                .Replace("$Time$", currentTime.ToString())
+                                .Replace("$Number$", currentSegment.ToString());
+
+                            currentTime += segment.Duration;
+                            currentSegment++;
+                            yield return segmentUrl;
+                        }
+                    }
+                }
+                else
+                {
+                    int i = 1;
+                    while (true) // ToDo break while when done. But when is done?
+                    {
+                        yield return segmentTemplate.Media
+                            .Replace("$RepresentationID$", representation.Id)
+                            .Replace("$Number$", i.ToString());
+                        i++;
+                    }
                 }
             }
             else if (representation.SegmentList != null)

@@ -16,9 +16,9 @@ namespace Qoollo.MpegDash
             trackRepresentations = new Lazy<IEnumerable<TrackRepresentation>>(GetTrackRepresentations);
         }
 
-        public ContentType ContentType
+        public string ContentType
         {
-            get { return new ContentType(adaptationSet.ContentType); }
+            get { return adaptationSet.ContentType; }
         }
 
         public IEnumerable<TrackRepresentation> TrackRepresentations
