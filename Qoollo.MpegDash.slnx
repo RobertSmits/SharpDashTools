@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/NuGet/">
+    <File Path="NuGet/Qoollo.MpegDash.csproj.nuspec" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Qoollo.MpegDash.Samples/Qoollo.MpegDash.Samples.csproj" />
+  <Project Path="Qoollo.MpegDash.Tests/Qoollo.MpegDash.Tests.csproj" />
+  <Project Path="Qoollo.MpegDash/Qoollo.MpegDash.csproj" />
+</Solution>

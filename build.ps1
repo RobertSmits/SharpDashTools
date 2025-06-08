@@ -274,7 +274,7 @@ function WriteAssemblyVersion
 
 $WorkingDir = split-path -parent $MyInvocation.MyCommand.Definition
 
-$slnFile = [IO.Path]::Combine($WorkingDir, 'SharpDashTools.sln')
+$slnFile = [IO.Path]::Combine($WorkingDir, 'Qoollo.MpegDash.slnx')
 
 DownloadNuget
 
