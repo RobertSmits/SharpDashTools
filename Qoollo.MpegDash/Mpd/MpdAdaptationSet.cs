@@ -28,7 +28,9 @@ public class MpdAdaptationSet : MpdElement
 
     public string? Lang => _node.Attribute("lang")?.Value;
 
-    public string? ContentType => _node.ParseOptionalString("contentType") ?? _node.ParseOptionalString("mimeType");
+    public string? ContentType => _node.ParseOptionalString("contentType") ?? _node.ParseOptionalString("mimeType")?.Split('/').FirstOrDefault();
+
+    public string? MimeType => _node.ParseOptionalString("mimeType");
 
     public AspectRatio? Par => _node.ParseOptionalAspectRatio("par");
 
