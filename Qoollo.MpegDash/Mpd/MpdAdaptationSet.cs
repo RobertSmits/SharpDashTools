@@ -32,6 +32,8 @@ public class MpdAdaptationSet : MpdElement
 
     public string? MimeType => _node.ParseOptionalString("mimeType");
 
+    public string? Label => _node.ParseOptionalString("label");
+
     public AspectRatio? Par => _node.ParseOptionalAspectRatio("par");
 
     public uint? MinBandwidth => _node.ParseOptionalUint("minBandwidth");
